@@ -9,8 +9,8 @@ import java.util.Map;
 @Controller
 public class User {
 
-    private String userId, email, firstname, lastname, password, isDeleted;
-    private int userType;
+    private String userId, email, firstname, lastname, password;
+    private int userType, isDeleted, configuredPassword;
 
     public User(){}
 
@@ -54,11 +54,11 @@ public class User {
         this.password = password;
     }
 
-    public String getIsDeleted() {
+    public int getIsDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(String isDeleted) {
+    public void setIsDeleted(int isDeleted) {
         this.isDeleted = isDeleted;
     }
 
@@ -68,6 +68,14 @@ public class User {
 
     public void setUserType(int userType) {
         this.userType = userType;
+    }
+
+    public int getConfiguredPassword() {
+        return configuredPassword;
+    }
+
+    public void setConfiguredPassword(int configuredPassword) {
+        this.configuredPassword = configuredPassword;
     }
 
     public Map<String, Object> getMap() {
