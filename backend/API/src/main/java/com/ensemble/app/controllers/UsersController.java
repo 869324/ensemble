@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -131,14 +133,13 @@ public class UsersController {
 
     @PostMapping(value = "get")
     public Map<String, Object> getUsers(@RequestBody Map<String, Object> user, HttpServletResponse response) {
-        user.put("@count", "count");
         Map<String, Object> map = storedProcedureCaller.call("getUsers", user);
-        System.out.println(map);
-//        if (result3 > 0){
-//            response.setStatus(HttpStatus.OK.value());
-//        } else {
-//            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        }
+
+        if (!map.isEmpty()){
+            response.setStatus(HttpStatus.OK.value());
+        } else {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
         return  map;
     }
 

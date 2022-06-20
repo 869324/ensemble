@@ -2,38 +2,30 @@ package com.ensemble.app.controllers;
 
 import com.ensemble.app.classes.StoredProcedureCaller;
 import com.ensemble.app.classes.Team;
-import com.ensemble.app.classes.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("teams")
+@RequestMapping("projects")
 @ResponseBody
-public class TeamsController {
-
+public class ProjectsController {
     @Autowired
     JdbcTemplate jdbcTemplate;
     @Autowired
     StoredProcedureCaller storedProcedureCaller;
     @Autowired
     ObjectMapper objectMapper;
-
 
 
     @PostMapping(value = "create",
@@ -45,10 +37,10 @@ public class TeamsController {
         if (existingTeams.size() > 0) {
             System.out.println(existingTeams.get(0).get("teamId").toString());
             System.out.println(team.getTeamId());
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                Map<String, Object> res = new HashMap<>();
-                res.put("Error", "Name already in use!");
-                return res;
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            Map<String, Object> res = new HashMap<>();
+            res.put("Error", "Name already in use!");
+            return res;
         }
         else {
             team.setTeamId(UUID.randomUUID().toString());
@@ -113,8 +105,6 @@ public class TeamsController {
             return null;
         }
     }
-
-
 
 
 }
