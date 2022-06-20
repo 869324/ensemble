@@ -2,6 +2,7 @@ package com.ensemble.app.classes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -22,8 +23,8 @@ public class StoredProcedureCaller {
 
         SqlParameterSource params = new MapSqlParameterSource(inputs);
 
-
-        Map<String, Object> simpleJdbcCallResult = simpleJdbcCall.execute(params);
-        return simpleJdbcCallResult;
+        return simpleJdbcCall.execute(params);
     }
+
+
 }
