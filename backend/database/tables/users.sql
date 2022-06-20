@@ -5,6 +5,7 @@ CREATE TABLE users (
 	lastname varchar(max) NOT NULL,
 	userType int NOT NULL,
 	password varchar(max) NOT NULL,
-	isDeleted varchar(max) NOT NULL DEFAULT '0',
+	isDeleted int NOT NULL DEFAULT 0,
+	configuredPassword int NOT NULL DEFAULT 0,
 	CONSTRAINT FK_USER_TYPE FOREIGN KEY (userType) REFERENCES roles(id)
 )
