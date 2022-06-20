@@ -18,7 +18,10 @@ public class StoredProcedureCaller {
     public StoredProcedureCaller(){}
 
     public Map<String, Object> call(String procedure, Map<String, Object> inputs) {
-        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate).withProcedureName(procedure);
+        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName(procedure)
+                .withoutProcedureColumnMetaDataAccess()
+                .withNamedBinding();
 
         SqlParameterSource params = new MapSqlParameterSource(inputs);
 

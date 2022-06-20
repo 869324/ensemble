@@ -1,6 +1,7 @@
 package com.ensemble.app.controllers;
 
 import com.ensemble.app.classes.StoredProcedureCaller;
+import com.ensemble.app.classes.Team;
 import com.ensemble.app.classes.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -127,6 +128,22 @@ public class UsersController {
          }
     }
 
+
+    @PostMapping(value = "get")
+    public Map<String, Object> getUsers(@RequestBody Map<String, Object> user, HttpServletResponse response) {
+        user.put("@count", "count");
+        Map<String, Object> map = storedProcedureCaller.call("getUsers", user);
+        System.out.println(map);
+//        if (result3 > 0){
+//            response.setStatus(HttpStatus.OK.value());
+//        } else {
+//            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//        }
+        return  map;
+    }
+
+
+
     @PutMapping(value = "resetPassword",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -208,7 +225,7 @@ public class UsersController {
             return Map.of("Error", "Email is already in use!");
         }
         else {
-            int result = jdbcTemplate.update("update users set email = ?, firstname = ?, lastname = ? where userId = ?", user.getEmail(), user.getFirstname(), user.getLastname(), user.getUserId());
+            int result = jdbcTemplate.update("update users set email = ?, firstname = ?, lastname = ?, userType = ? where userId = ?", user.getEmail(), user.getFirstname(), user.getLastname(), user.getUserType(), user.getUserId());
             if (result > 0) {
                 response.setStatus(HttpStatus.OK.value());
             } else {
