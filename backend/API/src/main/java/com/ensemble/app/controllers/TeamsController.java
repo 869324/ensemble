@@ -69,16 +69,26 @@ public class TeamsController {
 
     @DeleteMapping(value = "delete")
     public Map<String, Object> deleteTeam(@RequestParam String teamId, HttpServletResponse response) {
-        int result1 = jdbcTemplate.update("delete from projects where team = ?", teamId);
-        int result2 = jdbcTemplate.update("delete from teamMembers where team = ?", teamId);
-        int result3 = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
-
-        if (result3 > 0){
-            response.setStatus(HttpStatus.OK.value());
-        } else {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        List<Map<String, Object>> existingProjects = jdbcTemplate.queryForList("select * from projects where team = ?",teamId);
+        if (existingProjects.size() > 0) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return Map.of("Error", "This team has active projects!");
         }
-        return  null;
+        else {
+            int result2 = jdbcTemplate.update("delete from teamMembers where team = ?", teamId);
+            if (result2 > 0) {
+                int result3 = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
+
+                if (result3 > 0) {
+                    response.setStatus(HttpStatus.OK.value());
+                } else {
+                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                }
+            }else {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            }
+            return null;
+        }
     }
 
 
@@ -115,6 +125,27 @@ public class TeamsController {
     }
 
 
+    @PostMapping(value = "addMember")
+    public Map<String, Object> addMember(@RequestBody Map<String, String> map, HttpServletResponse response) {
+        String teamId = map.get("teamId");
+        String userId = map.get("userId");
 
+        List<Map<String, Object>> existingMembers = jdbcTemplate.queryForList("select * from teamMembers where membershipId = ?", teamId.concat(userId));
+        if (existingMembers.size() > 0) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return Map.of("Error", "User is already a member!");
+        }
+        else {
+            int result = jdbcTemplate.update("insert into teamMembers (membershipId, team, member) values (?, ?, ?)", teamId.concat(userId), teamId, userId);
+            if (result > 0) {
+                response.setStatus(HttpStatus.OK.value());
+            } else {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            }
+        }
+
+
+    return null;
+    }
 
 }

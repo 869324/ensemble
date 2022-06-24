@@ -17,4 +17,5 @@ OFFSET (@page - 1) * @size ROWS
 
 FETCH NEXT @size ROWS ONLY
 
-SELECT @count = COUNT(*) from users ;
+SELECT @count = COUNT(*) from users
+WHERE (@userId is null or userId = @userId) AND (@name is null or (email like '%' +@name+ '%' or firstname like '%' +@name+ '%' or lastname like '%' +@name+ '%'));

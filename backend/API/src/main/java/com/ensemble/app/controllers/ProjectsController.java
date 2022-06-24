@@ -1,5 +1,6 @@
 package com.ensemble.app.controllers;
 
+import com.ensemble.app.classes.Project;
 import com.ensemble.app.classes.StoredProcedureCaller;
 import com.ensemble.app.classes.Team;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,23 +33,21 @@ public class ProjectsController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
-    public Map<String, Object> create(@RequestBody Team team, HttpServletResponse response) {
-        List<Map<String, Object>> existingTeams = jdbcTemplate.queryForList("select * from teams where name = '" + team.getName() +"'" );
-        if (existingTeams.size() > 0) {
-            System.out.println(existingTeams.get(0).get("teamId").toString());
-            System.out.println(team.getTeamId());
+    public Map<String, Object> create(@RequestBody Project project, HttpServletResponse response) {
+        List<Map<String, Object>> existingProjects = jdbcTemplate.queryForList("select * from projects where name = '" + project.getName() +"'" );
+        if (existingProjects.size() > 0) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             Map<String, Object> res = new HashMap<>();
             res.put("Error", "Name already in use!");
             return res;
         }
         else {
-            team.setTeamId(UUID.randomUUID().toString());
+            project.setProjectId(UUID.randomUUID().toString());
 
-            Map<String, Object> teamObject = team.getMap();
-            int result = jdbcTemplate.update("insert into teams (teamId, name) values (?, ?)", team.getTeamId(), team.getName());
-            if (result > 0) {
-                return teamObject;
+            Map<String, Object> projectObject = project.getMap();
+            Map<String, Object> result  = storedProcedureCaller.call("addProject", projectObject);
+            if (result.containsKey("#update-count-1") && (int) result.get("#update-count-1") == 1) {
+                return projectObject;
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return null;
@@ -60,24 +59,41 @@ public class ProjectsController {
 
 
     @DeleteMapping(value = "delete")
-    public Map<String, Object> deleteTeam(@RequestParam String teamId, HttpServletResponse response) {
-        int result1 = jdbcTemplate.update("delete from projects where team = ?", teamId);
-        int result2 = jdbcTemplate.update("delete from teamMembers where team = ?", teamId);
-        int result3 = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
+    public Map<String, Object> deleteProject(@RequestParam String projectId, HttpServletResponse response) {
+        List<Map<String, Object>> existingTables = jdbcTemplate.queryForList("select * from tables where project= ?", projectId);
+        List<Map<String, Object>> existingEndpoints = jdbcTemplate.queryForList("select * from endpoints where project= ?", projectId);
+        List<Map<String, Object>> existingClasses = jdbcTemplate.queryForList("select * from classes where project= ?", projectId);
+        List<Map<String, Object>> existingNotes = jdbcTemplate.queryForList("select * from notes where project= ?", projectId);
 
-        if (result3 > 0){
-            response.setStatus(HttpStatus.OK.value());
-        } else {
+        for (Map<String, Object> table : existingTables) {
+            Map<String, Object> result = storedProcedureCaller.call("deleteTable", Map.of("tableId", table.get("tableId")));
+        }
+
+        for (Map<String, Object> endpoint : existingEndpoints) {
+            Map<String, Object> result = storedProcedureCaller.call("deleteEndpoint", Map.of("endpointId", endpoint.get("endpointId")));
+        }
+
+        for (Map<String, Object> myClass : existingClasses) {
+            Map<String, Object> result = storedProcedureCaller.call("deleteClass", Map.of("classId", myClass.get("classId")));
+        }
+
+        for (Map<String, Object> note : existingNotes) {
+            Map<String, Object> result = storedProcedureCaller.call("deleteNote", Map.of("noteId", note.get("noteId")));
+        }
+
+        int result = jdbcTemplate.update("delete from projects where projectId = ?", projectId);
+
+        if (result < 1) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return  null;
+        return null;
     }
 
 
 
     @PostMapping(value = "get")
-    public Map<String, Object> getTeams(@RequestBody Map<String, Object> team, HttpServletResponse response) {
-        Map<String, Object> map = storedProcedureCaller.call("getTeams", team);
+    public Map<String, Object> getProjects(@RequestBody Map<String, Object> project, HttpServletResponse response) {
+        Map<String, Object> map = storedProcedureCaller.call("getProjects", project);
 
         if (!map.isEmpty()){
             response.setStatus(HttpStatus.OK.value());
@@ -89,14 +105,14 @@ public class ProjectsController {
 
 
     @PutMapping(value = "update")
-    public Map<String, Object> update(@RequestBody Team team, HttpServletResponse response) {
-        List<Map<String, Object>> existingTeams = jdbcTemplate.queryForList("select * from teams where name = '" + team.getName() +"'" );
-        if (existingTeams.size() > 0 && !existingTeams.get(0).get("teamId").toString().equals(team.getTeamId()) ) {
+    public Map<String, Object> update(@RequestBody Project project, HttpServletResponse response) {
+        List<Map<String, Object>> existingProjects = jdbcTemplate.queryForList("select * from projects where name = '" + project.getName() +"'" );
+        if (existingProjects.size() > 0 && !existingProjects.get(0).get("projectId").toString().equals(project.getProjectId()) ) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return Map.of("Error", "Name is already in use!");
         }
         else {
-            int result = jdbcTemplate.update("update teams set name = ? where teamId = ?", team.getName(), team.getTeamId());
+            int result = jdbcTemplate.update("update teams set name = ?, team = ?, budget = ?, progress = ? where projectId = ?", project.getName(), project.getTeam(), project.getBudget(), project.getProgress(), project.getProjectId());
             if (result > 0) {
                 response.setStatus(HttpStatus.OK.value());
             } else {
