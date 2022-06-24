@@ -17,4 +17,4 @@ OFFSET (@page - 1) * @size ROWS
 
 FETCH NEXT @size ROWS ONLY
 
-SELECT @count = COUNT(*) from teams ;
+SELECT @count = COUNT(*) from teams WHERE (@teamId is null or teamId = @teamId) AND (@name is null or name like '%' +@name+ '%');
