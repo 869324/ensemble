@@ -1,0 +1,6 @@
+@mixin defaultBackground() {
+  width: 100vw;
+  height: 100vh;
+  background-position: center;
+  background-size: cover;
+}

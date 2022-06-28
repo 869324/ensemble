@@ -3,9 +3,19 @@
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import Workbench from "../Workbench/workbench";
 import Home from "../Home/home";
+import { useSelector } from "react-redux";
+import { RootState } from "../../StateManagement/Store/store";
+import { useEffect } from "react";
 
 function User() {
   const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, user);
 
   return (
     <Routes>

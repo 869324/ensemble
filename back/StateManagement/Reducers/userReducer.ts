@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch } from "../Store/store";
 
-const initialState = {};
+const initialState = {
+  loading: false,
+  status: false,
+  user: null,
+};
 
 interface LoginInterface {
   email: String;
@@ -13,7 +17,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login(state, action: PayloadAction<LoginInterface>) {
-      return action.payload;
+      return { ...initialState };
     },
   },
 });
