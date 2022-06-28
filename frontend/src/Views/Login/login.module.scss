@@ -1,0 +1,45 @@
+@import "../../globalStyles/global";
+
+main {
+  @include defaultBackground;
+}
+
+.overlay {
+  @include centerContainerH;
+  @include overlay;
+}
+
+.content {
+  @include centerContainerV;
+  width: 40%;
+  height: 70%;
+  background-color: rgba($color: white, $alpha: 0.3);
+  border-radius: 10px;
+}
+
+form {
+  @include centerContainerV;
+  width: 70%;
+  height: 70%;
+
+  button {
+    @include button;
+    width: 50%;
+  }
+}
+
+.inputDiv {
+  @include inputDiv;
+
+  label {
+  }
+
+  input {
+    @include input;
+    width: 100%;
+  }
+
+  input:focus {
+    @include input;
+  }
+}

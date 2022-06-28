@@ -4,5 +4,5 @@ CREATE TABLE projects (
 	team varchar(255) NOT NULL,
 	budget float NOT NULL default 0,
 	progress float NOT NULL default 0,
-	CONSTRAINT FK_TEAM_PROJECT FOREIGN KEY (team) REFERENCES teams(teamId)
+	CONSTRAINT FK_TEAM_PROJECT FOREIGN KEY (team) REFERENCES teams(teamId) ON DELETE CASCADE
 )

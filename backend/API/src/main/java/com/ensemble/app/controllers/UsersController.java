@@ -1,18 +1,13 @@
 package com.ensemble.app.controllers;
 
-import com.ensemble.app.classes.StoredProcedureCaller;
-import com.ensemble.app.classes.Team;
+import com.ensemble.app.utils.StoredProcedureCaller;
 import com.ensemble.app.classes.User;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlOutParameter;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,13 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("users")
@@ -52,7 +45,7 @@ public class UsersController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
     public Map<String, Object> login(@RequestBody User user, HttpServletResponse response) {
-        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where email = '"+user.getEmail()+"' and isDeleted = '0'");
+        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where email = '"+user.getEmail()+"'");
         if (users.size() < 1){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             Map<String, Object> res = new HashMap<>();
@@ -84,31 +77,10 @@ public class UsersController {
     public Map<String, Object> create(@RequestBody User user, HttpServletResponse response) {
         List<Map<String, Object>> existingUsers = jdbcTemplate.queryForList("select * from users where email = '" + user.getEmail() +"'" );
          if (existingUsers.size() > 0) {
-             User existingUser = objectMapper.convertValue(existingUsers.get(0), User.class);
-             if (existingUser.getIsDeleted() == 0) {
-                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                 Map<String, Object> res = new HashMap<>();
-                 res.put("Error", "Email already in use!");
-                 return res;
-             }else {
-                 String password = RandomStringUtils.randomAscii(8);
-                 existingUser.setPassword(bCryptPasswordEncoder.encode(password));
-
-                 Map<String, Object> userObject = existingUser.getMap();
-                 System.out.println(userObject);
-                 Map<String, Object> result = storedProcedureCaller.call("restoreUser", userObject);
-
-                 if (result.containsKey("#update-count-1") && (int) result.get("#update-count-1") == 1) {
-                     sendSetupEmail(password, user);
-
-                     userObject.remove("password");
-                     userObject.remove("isDeleted");
-                     return userObject;
-                 } else {
-                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                     return null;
-                 }
-             }
+             response.setStatus(HttpStatus.BAD_REQUEST.value());
+             Map<String, Object> res = new HashMap<>();
+             res.put("Error", "Email already in use!");
+             return res;
          }
          else {
              String password = RandomStringUtils.randomAscii(8);
@@ -149,7 +121,7 @@ public class UsersController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public Map<String, Object> resetPassword(@RequestBody User user, HttpServletResponse response) {
-        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where email = '"+user.getEmail()+"' and isDeleted = '0'");
+        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where email = '"+user.getEmail()+"'");
         if (users.size() < 1){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             Map<String, Object> res = new HashMap<>();
@@ -176,7 +148,7 @@ public class UsersController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public Map<String, Object> configurePassword(@RequestBody Map<String, Object> user, HttpServletResponse response) {
-        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where userId = '"+user.get("userId").toString()+"' and isDeleted = '0'");
+        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where userId = '"+user.get("userId").toString()+"'");
 
         Map<String, Object> existingUser = users.get(0);
         if((int) existingUser.get("configuredPassword") == 1){
@@ -207,7 +179,7 @@ public class UsersController {
 
     @DeleteMapping(value = "delete", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public Map<String, Object> deleteUser(@RequestParam String userId, HttpServletResponse response) {
-        int result = jdbcTemplate.update("update users set isDeleted = '1' where userId = ?", userId);
+        int result = jdbcTemplate.update("delete from users where userId = ?", userId);
         if (result > 0) {
             response.setStatus(HttpStatus.OK.value());
         } else {

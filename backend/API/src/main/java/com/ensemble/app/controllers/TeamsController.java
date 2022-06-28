@@ -1,22 +1,16 @@
 package com.ensemble.app.controllers;
 
-import com.ensemble.app.classes.StoredProcedureCaller;
+import com.ensemble.app.utils.StoredProcedureCaller;
 import com.ensemble.app.classes.Team;
-import com.ensemble.app.classes.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,20 +69,18 @@ public class TeamsController {
             return Map.of("Error", "This team has active projects!");
         }
         else {
-            int result2 = jdbcTemplate.update("delete from teamMembers where team = ?", teamId);
-            if (result2 > 0) {
-                int result3 = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
+            int result = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
 
-                if (result3 > 0) {
-                    response.setStatus(HttpStatus.OK.value());
-                } else {
-                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                }
-            }else {
+            if (result > 0) {
+                response.setStatus(HttpStatus.OK.value());
+            } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
-            return null;
+
+
         }
+        return null;
+
     }
 
 
