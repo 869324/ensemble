@@ -1,0 +1,21 @@
+@import "../../globalStyles//global";
+
+.searchDiv {
+  display: flex;
+  align-items: center;
+}
+
+.search {
+  font-size: 17px;
+  padding: 7px;
+  border-radius: 7px;
+  border: none;
+}
+
+.searchIcon {
+  color: black;
+  margin-left: 10px;
+  border-radius: 10px;
+  padding: 3px;
+  background-color: $secondaryColor;
+}

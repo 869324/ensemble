@@ -6,47 +6,67 @@ const initialState = {
   tried: false,
   loading: false,
   status: false,
-  user: null,
-  error: "",
+  projects: [],
+  error: null,
 };
 
-const userSlice = createSlice({
-  name: "user",
+const projectsSlice = createSlice({
+  name: "projects",
   initialState,
   reducers: {
-    login(state, action) {
+    getProjects(state, action) {
       return { ...state, ...action.payload };
-    },
-
-    logout(state, action) {
-      return initialState;
     },
 
     create(state, action) {
       return { ...state, ...action.payload };
     },
 
-    resetLogin(state, action) {
+    resetProjects(state, action) {
       return {
         ...state,
         loading: false,
         tried: false,
         status: false,
-        error: "",
+        error: null,
       };
     },
   },
 });
 
-export const login = (user) => async (dispatch) => {
-  dispatch(userSlice.actions.login({ loading: true, tried: true }));
+export const getProjects = (projectsData) => async (dispatch) => {
+  dispatch(projectsSlice.actions.getProjects({ loading: true, tried: true }));
 
   axios
-    .post(`${BASE_API_PATH}/users/login`, user)
+    .post(`${BASE_API_PATH}/projects/get`, projectsData)
     .then((response) => {
       dispatch(
-        userSlice.actions.login({
-          user: response.data,
+        projectsSlice.actions.getProjects({
+          projects: response.data,
+          loading: false,
+          status: true,
+          error: null,
+        })
+      );
+    })
+    .catch((error) => {
+      dispatch(
+        projectsSlice.actions.getProjects({
+          loading: false,
+          status: false,
+        })
+      );
+    });
+};
+
+export const create = (project) => async (dispatch) => {
+  dispatch(projectsSlice.actions.create({ loading: true, tried: true }));
+
+  axios
+    .post(`${BASE_API_PATH}/projects/create`, project)
+    .then((response) => {
+      dispatch(
+        projectsSlice.actions.create({
           loading: false,
           status: true,
           error: "",
@@ -55,43 +75,15 @@ export const login = (user) => async (dispatch) => {
     })
     .catch((error) => {
       dispatch(
-        userSlice.actions.login({
+        projectsSlice.actions.create({
           loading: false,
           status: false,
-          user: null,
           error: error.response.data.error,
         })
       );
     });
 };
 
-export const signup = (user) => async (dispatch) => {
-  console.log(user);
-  dispatch(userSlice.actions.signup({ loading: true, tried: true }));
+export const { resetProjects } = projectsSlice.actions;
 
-  axios
-    .post(`${BASE_API_PATH}/users/create`, user)
-    .then((response) => {
-      dispatch(
-        userSlice.actions.login({
-          loading: false,
-          status: true,
-          error: "",
-        })
-      );
-    })
-    .catch((error) => {
-      dispatch(
-        userSlice.actions.login({
-          loading: false,
-          status: false,
-          user: null,
-          error: error.response.data.error,
-        })
-      );
-    });
-};
-
-export const { resetLogin, logout } = userSlice.actions;
-
-export default userSlice.reducer;
+export default projectsSlice.reducer;
