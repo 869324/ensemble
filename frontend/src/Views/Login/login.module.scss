@@ -1,6 +1,6 @@
 @import "../../globalStyles/global";
 
-main {
+.main {
   @include defaultBackground;
 }
 
@@ -13,14 +13,18 @@ main {
   @include centerContainerV;
   width: 40%;
   height: 70%;
-  background-color: rgba($color: white, $alpha: 0.3);
+  background-color: rgba($color: white, $alpha: 0.8);
   border-radius: 10px;
 }
 
-form {
+.h2 {
+  color: $primaryColor;
+}
+
+.form {
   @include centerContainerV;
   width: 70%;
-  height: 70%;
+  height: 60%;
 
   button {
     @include button;
@@ -31,10 +35,12 @@ form {
 .inputDiv {
   @include inputDiv;
 
-  label {
+  .label {
+    font-weight: 500;
+    margin-bottom: 5px;
   }
 
-  input {
+  .input {
     @include input;
     width: 100%;
   }
@@ -42,4 +48,16 @@ form {
   input:focus {
     @include input;
   }
+}
+
+#forgotPassword {
+  border: none;
+  background-color: transparent;
+  color: $primaryColor;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+#forgotPassword:hover {
+  text-decoration: underline;
 }

@@ -1,3 +1,4 @@
+$primaryColor: #495fa6;
 $secondaryColor: #f6ae84;
 
 @mixin defaultBackground() {
@@ -35,8 +36,8 @@ $secondaryColor: #f6ae84;
   margin-bottom: 20px;
 }
 
-@mixin input($bg: rgba(255, 255, 255, 0.5), $color: black) {
-  border: 1px solid $secondaryColor;
+@mixin input($bg: transparent, $color: black) {
+  border: 2px solid $primaryColor;
   background-color: $bg;
   color: $color;
   font-size: 17px;
@@ -46,10 +47,11 @@ $secondaryColor: #f6ae84;
 }
 
 @mixin button() {
-  padding: 15px 50px;
+  padding: 15px 60px;
   font-weight: bold;
   size: 20px;
   border: none;
-  background-color: #f6ae84;
+  background-color: $primaryColor;
   border-radius: 30px;
+  color: whitesmoke;
 }

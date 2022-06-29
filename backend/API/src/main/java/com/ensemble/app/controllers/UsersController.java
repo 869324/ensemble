@@ -45,11 +45,11 @@ public class UsersController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
     public Map<String, Object> login(@RequestBody User user, HttpServletResponse response) {
-        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where email = '"+user.getEmail()+"'");
+        List<Map<String, Object>> users = jdbcTemplate.queryForList("select * from users where email = ?",user.getEmail());
         if (users.size() < 1){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             Map<String, Object> res = new HashMap<>();
-            res.put("Error", "Invalid username!");
+            res.put("error", "Invalid email!");
             return res;
         }
         else {
@@ -63,7 +63,7 @@ public class UsersController {
             else {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 Map<String, Object> res = new HashMap<>();
-                res.put("Error", "Password is incorrect!");
+                res.put("error", "Password is incorrect!");
                 return res;
             }
         }
@@ -79,7 +79,7 @@ public class UsersController {
          if (existingUsers.size() > 0) {
              response.setStatus(HttpStatus.BAD_REQUEST.value());
              Map<String, Object> res = new HashMap<>();
-             res.put("Error", "Email already in use!");
+             res.put("error", "Email already in use!");
              return res;
          }
          else {
@@ -125,7 +125,7 @@ public class UsersController {
         if (users.size() < 1){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             Map<String, Object> res = new HashMap<>();
-            res.put("Error", "There is no account with such username!");
+            res.put("error", "There is no account with such username!");
             return res;
         }
         else {
@@ -153,7 +153,7 @@ public class UsersController {
         Map<String, Object> existingUser = users.get(0);
         if((int) existingUser.get("configuredPassword") == 1){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return Map.of("Error", "Password already configured");
+            return Map.of("error", "Password already configured");
         }
         else {
             boolean matches = bCryptPasswordEncoder.matches(user.get("oldPassword").toString(), existingUser.get("password").toString());
@@ -169,7 +169,7 @@ public class UsersController {
             } else {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 Map<String, Object> res = new HashMap<>();
-                res.put("Error", "The old password is incorrect!");
+                res.put("error", "The old password is incorrect!");
                 return res;
             }
         }
@@ -195,7 +195,7 @@ public class UsersController {
         List<Map<String, Object>> existingUsers = jdbcTemplate.queryForList("select * from users where email = '" + user.getEmail() +"'" );
         if (existingUsers.size() > 0 && !existingUsers.get(0).get("userId").toString().equals(user.getUserId())) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return Map.of("Error", "Email is already in use!");
+            return Map.of("error", "Email is already in use!");
         }
         else {
             int result = jdbcTemplate.update("update users set email = ?, firstname = ?, lastname = ?, userType = ? where userId = ?", user.getEmail(), user.getFirstname(), user.getLastname(), user.getUserType(), user.getUserId());

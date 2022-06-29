@@ -1,0 +1,22 @@
+@import "../../globalStyles/global";
+
+.main {
+  @include defaultBackground;
+}
+
+.overlay {
+  @include centerContainerH;
+  @include overlay;
+}
+
+.content {
+  @include centerContainerV;
+  width: 40%;
+  height: 70%;
+  background-color: rgba($color: white, $alpha: 0.8);
+  border-radius: 10px;
+}
+
+.h2 {
+  color: $primaryColor;
+}
