@@ -11,8 +11,10 @@ function Workbench() {
     >
       <div className={styles.overlay}>
         <Header />
+
         <div className={styles.body}>
           <UserDashboard />
+
           <div className={styles.panel}>
             <h2 id="label">In what team are we working in today?</h2>
 

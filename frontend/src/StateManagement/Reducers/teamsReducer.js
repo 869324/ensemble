@@ -6,16 +6,16 @@ const initialState = {
   tried: false,
   loading: false,
   status: false,
-  projects: [],
+  teams: [],
   error: null,
-  currentProject: null,
+  currentTeam: null,
 };
 
-const projectsSlice = createSlice({
-  name: "projects",
+const teamsSlice = createSlice({
+  name: "teams",
   initialState,
   reducers: {
-    getProjects(state, action) {
+    getTeams(state, action) {
       return { ...state, ...action.payload };
     },
 
@@ -23,11 +23,11 @@ const projectsSlice = createSlice({
       return { ...state, ...action.payload };
     },
 
-    selectProject(state, action) {
-      return { ...state, currentProject: action.payload };
+    selectTeam(state, action) {
+      return { ...state, currentTeam: action.payload };
     },
 
-    resetProjects(state, action) {
+    resetTeams(state, action) {
       return {
         ...state,
         loading: false,
@@ -39,17 +39,17 @@ const projectsSlice = createSlice({
   },
 });
 
-export const getProjects = (projectsData, type) => async (dispatch) => {
-  dispatch(projectsSlice.actions.getProjects({ loading: true, tried: true }));
+export const getTeams = (teamsData, type) => async (dispatch) => {
+  dispatch(teamsSlice.actions.getTeams({ loading: true, tried: true }));
 
   const endpoint = type == "all" ? "get" : "getByUser";
 
   axios
-    .post(`${BASE_API_PATH}/projects/${endpoint}`, projectsData)
+    .post(`${BASE_API_PATH}/teams/${endpoint}`, teamsData)
     .then((response) => {
       dispatch(
-        projectsSlice.actions.getProjects({
-          projects: response.data,
+        teamsSlice.actions.getTeams({
+          teams: response.data,
           loading: false,
           status: true,
           error: null,
@@ -58,7 +58,7 @@ export const getProjects = (projectsData, type) => async (dispatch) => {
     })
     .catch((error) => {
       dispatch(
-        projectsSlice.actions.getProjects({
+        teamsSlice.actions.getTeams({
           loading: false,
           status: false,
         })
@@ -66,14 +66,14 @@ export const getProjects = (projectsData, type) => async (dispatch) => {
     });
 };
 
-export const create = (project) => async (dispatch) => {
-  dispatch(projectsSlice.actions.create({ loading: true, tried: true }));
+export const create = (team) => async (dispatch) => {
+  dispatch(teamsSlice.actions.create({ loading: true, tried: true }));
 
   axios
-    .post(`${BASE_API_PATH}/projects/create`, project)
+    .post(`${BASE_API_PATH}/teams/create`, team)
     .then((response) => {
       dispatch(
-        projectsSlice.actions.create({
+        teamsSlice.actions.create({
           loading: false,
           status: true,
           error: "",
@@ -82,7 +82,7 @@ export const create = (project) => async (dispatch) => {
     })
     .catch((error) => {
       dispatch(
-        projectsSlice.actions.create({
+        teamsSlice.actions.create({
           loading: false,
           status: false,
           error: error.response.data.error,
@@ -91,6 +91,6 @@ export const create = (project) => async (dispatch) => {
     });
 };
 
-export const { resetProjects, selectProject } = projectsSlice.actions;
+export const { resetTeams, selectTeam } = teamsSlice.actions;
 
-export default projectsSlice.reducer;
+export default teamsSlice.reducer;
