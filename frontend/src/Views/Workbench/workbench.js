@@ -2,6 +2,9 @@ import styles from "./workbench.module.scss";
 
 import Header from "../../Components/Header/header";
 import UserDashboard from "../../Components/UserDashboard/userDashboard";
+import { Navigate, Route, Routes } from "react-router-dom";
+import ProjectOverview from "../ProjectOverview/projectOverview";
+import Database from "../Database/database";
 
 function Workbench() {
   return (
@@ -16,11 +19,21 @@ function Workbench() {
           <UserDashboard />
 
           <div className={styles.panel}>
-            <h2 id="label">In what team are we working in today?</h2>
-
-            <div className="teamsContainer"></div>
-
-            <button>Create Team</button>
+            <Routes>
+              <Route
+                path="/"
+                element={<Navigate to="projectOverview" />}
+              ></Route>
+              <Route
+                path="projectOverview"
+                element={<ProjectOverview />}
+              ></Route>
+              <Route path="database" element={<Database />}></Route>
+              <Route path="projectOverview"></Route>
+              <Route path="projectOverview"></Route>
+              <Route path="projectOverview"></Route>
+              <Route path="projectOverview"></Route>
+            </Routes>
           </div>
         </div>
       </div>
