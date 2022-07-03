@@ -8,6 +8,7 @@ const initialState = {
   status: false,
   projects: [],
   error: null,
+  currentProject: null,
 };
 
 const projectsSlice = createSlice({
@@ -22,6 +23,10 @@ const projectsSlice = createSlice({
       return { ...state, ...action.payload };
     },
 
+    selectProject(state, action) {
+      return { ...state, currentProject: action.payload };
+    },
+
     resetProjects(state, action) {
       return {
         ...state,
@@ -34,11 +39,13 @@ const projectsSlice = createSlice({
   },
 });
 
-export const getProjects = (projectsData) => async (dispatch) => {
+export const getProjects = (projectsData, type) => async (dispatch) => {
   dispatch(projectsSlice.actions.getProjects({ loading: true, tried: true }));
 
+  const endpoint = type == "all" ? "get" : "getByUser";
+
   axios
-    .post(`${BASE_API_PATH}/projects/get`, projectsData)
+    .post(`${BASE_API_PATH}/projects/${endpoint}`, projectsData)
     .then((response) => {
       dispatch(
         projectsSlice.actions.getProjects({
@@ -84,6 +91,6 @@ export const create = (project) => async (dispatch) => {
     });
 };
 
-export const { resetProjects } = projectsSlice.actions;
+export const { resetProjects, selectProject } = projectsSlice.actions;
 
 export default projectsSlice.reducer;

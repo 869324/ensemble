@@ -8,18 +8,14 @@ function User() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user]);
-
-  return (
+  return user ? (
     <Routes>
       <Route path="/" element={<Navigate to="home" />}></Route>
       <Route path="home" element={<Home />}></Route>
-      <Route path="workbench" element={<Workbench />}></Route>
+      <Route path="workbench/*" element={<Workbench />}></Route>
     </Routes>
+  ) : (
+    <Navigate to="/login" />
   );
 }
 
