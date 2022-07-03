@@ -19,7 +19,7 @@ const tableSlice = createSlice({
       return { ...state, ...action.payload };
     },
 
-    create(state, action) {
+    createTable(state, action) {
       return { ...state, ...action.payload };
     },
 
@@ -64,14 +64,15 @@ export const getTables = (tablesData, type) => async (dispatch) => {
     });
 };
 
-export const create = (table) => async (dispatch) => {
-  dispatch(tableSlice.actions.create({ loading: true, tried: true }));
+export const createTable = (table) => async (dispatch) => {
+  console.log(table);
+  dispatch(tableSlice.actions.createTable({ loading: true, tried: true }));
 
   axios
     .post(`${BASE_API_PATH}/tables/create`, table)
     .then((response) => {
       dispatch(
-        tableSlice.actions.create({
+        tableSlice.actions.createTable({
           loading: false,
           status: true,
           error: "",
@@ -80,7 +81,7 @@ export const create = (table) => async (dispatch) => {
     })
     .catch((error) => {
       dispatch(
-        tableSlice.actions.create({
+        tableSlice.actions.createTable({
           loading: false,
           status: false,
           error: error.response.data.error,

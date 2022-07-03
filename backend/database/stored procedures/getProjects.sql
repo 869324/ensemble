@@ -1,5 +1,5 @@
 CREATE PROC getProjects @projectId varchar(255) = null, @name varchar(max) = null, @page int = 1, @size int = 10, 
-@order varchar(max) = 'NAME_ASC', @count int output
+@order varchar(max) = 'NAME_ASC'
 
 AS
 
@@ -18,6 +18,3 @@ ORDER BY
 OFFSET (@page - 1) * @size ROWS
 
 FETCH NEXT @size ROWS ONLY
-
-SELECT @count = COUNT(*) from projects 
-WHERE (@projectId is null or projectId = @projectId) AND (@name is null or name like '%' +@name+ '%');

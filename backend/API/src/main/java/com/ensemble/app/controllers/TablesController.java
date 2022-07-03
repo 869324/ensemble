@@ -33,8 +33,12 @@ public class TablesController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
-    public Map<String, Object> create(@RequestBody Table table, HttpServletResponse response) {
-        List<Map<String, Object>> existingTables = jdbcTemplate.queryForList("select * from projects where name = '" + table.getName() +"'" );
+    public Object create(@RequestBody Map<String, Object> map, HttpServletResponse response) {
+        Map<String, Object> table = (Map<String, Object>) map.get("table");
+        List<Map<String, Object>> columns = (List<Map<String, Object>>)map.get("columns");
+        List<Map<String, String>> relations = (List<Map<String, String>>)map.get("relationships");
+
+        List<Map<String, Object>> existingTables = jdbcTemplate.queryForList("select * from projects where name = '" + table.get("name") +"'" );
         if (existingTables.size() > 0) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             Map<String, Object> res = new HashMap<>();
@@ -42,18 +46,25 @@ public class TablesController {
             return res;
         }
         else {
-            table.setTableId(UUID.randomUUID().toString());
+            table.put("tableId", UUID.randomUUID().toString());
+            int result  = jdbcTemplate.update("insert into tables (tableId, name, description, project) values (?, ? ,? , ?)", table.get("tableId"), table.get("name"), table.get("description"), table.get("project"));
+            if (result > 0) {
+                for (Map<String, Object> column : columns) {
+                    column.put("columnId", UUID.randomUUID().toString());
+                    jdbcTemplate.update("insert into columns (columnId, name, description, datatype, owner) values (?, ?, ?, ?, ?)", column.get("columnId"), column.get("name"), column.get("description"), column.get("dataType"), table.get("tableId"));
+                }
 
-            Map<String, Object> tableObject = table.getMap();
-            int result  = jdbcTemplate.update("insert into tables (tableId, name, description, project) values (?, ? ,? , ?", table.getTableId(), table.getName(), table.getDescription(), table.getProject());
-            if (result > 01) {
-                return tableObject;
+                for (Map<String, String> relation : relations) {
+                    jdbcTemplate.update("insert into tableRelationships (relationshipId, column1, column2) values (?, ?, ?)", relation.get("column1").concat("_").concat(relation.get("column2")), relation.get("column1"), relation.get("column2"));
+                }
+
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return null;
+
             }
 
         }
+        return null;
     }
 
 
@@ -71,15 +82,15 @@ public class TablesController {
 
 
     @PostMapping(value = "get")
-    public Map<String, Object> getTables(@RequestBody Map<String, Object> table, HttpServletResponse response) {
+    public Object getTables(@RequestBody Map<String, Object> table, HttpServletResponse response) {
         Map<String, Object> map = storedProcedureCaller.call("getTables", table);
 
         if (!map.isEmpty()){
-            response.setStatus(HttpStatus.OK.value());
+            return map.get("#result-set-1");
         } else {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return  map;
+        return  null;
     }
 
 

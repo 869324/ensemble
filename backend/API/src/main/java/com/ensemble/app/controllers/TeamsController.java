@@ -86,15 +86,27 @@ public class TeamsController {
 
 
     @PostMapping(value = "get")
-    public Map<String, Object> getTeams(@RequestBody Map<String, Object> team, HttpServletResponse response) {
+    public Object getTeams(@RequestBody Map<String, Object> team, HttpServletResponse response) {
         Map<String, Object> map = storedProcedureCaller.call("getTeams", team);
 
         if (!map.isEmpty()){
-            response.setStatus(HttpStatus.OK.value());
+            return  map.get("#result-set-1");
         } else {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return  map;
+        return  null;
+    }
+
+    @PostMapping(value = "getByUser")
+    public Object getUserTeams(@RequestBody Map<String, Object> team, HttpServletResponse response) {
+        Map<String, Object> map = storedProcedureCaller.call("getUserTeams", team);
+
+        if (!map.isEmpty()){
+            return  map.get("#result-set-1");
+        } else {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return  null;
     }
 
 
