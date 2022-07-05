@@ -1,22 +1,66 @@
 import { useEffect, useState } from "react";
 import styles from "./addTable.module.scss";
 
-import { createTable } from "../../StateManagement/Reducers/tablesReducer";
-import { useDispatch } from "react-redux";
+import {
+  createTable,
+  getTables,
+  resetCreateTable,
+} from "../../StateManagement/Reducers/tablesReducer";
+import { useDispatch, useSelector } from "react-redux";
 import { RiAddFill, RiDeleteColumn } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
+import swal from "sweetalert";
+import { showModal } from "../../StateManagement/Reducers/modalReducer";
+import { useNavigate } from "react-router-dom";
 
 function AddTable(props) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const tableState = useSelector((state) => state.tables.createTable);
 
   const [tableData, setTableData] = useState({
-    name: "",
-    description: "",
+    name: props.name,
+    description: props.description,
     project: props.currentProject,
   });
 
-  const [columnsData, setColumnsData] = useState([]);
-  const [relationshipsData, setRelationshipsData] = useState([]);
+  const [columnsData, setColumnsData] = useState(props.columns);
+  const [relationshipsData, setRelationshipsData] = useState(
+    props.relationships
+  );
+
+  useEffect(() => {
+    const { loading, error, status, tried } = tableState;
+    console.log(tableState);
+
+    if (tried) {
+      if (status) {
+        swal({
+          title: "Table has been created",
+          icon: "success",
+        });
+        dispatch(showModal(false));
+      } else if (loading) {
+        swal({
+          text: "Loading ...",
+        });
+      } else if (error !== "") {
+        swal({
+          title: "Operation failed",
+          icon: "error",
+          text: error ? error : "Try again later",
+        });
+      }
+    }
+  }, [tableState]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(getTables(props.tablesData));
+      dispatch(resetCreateTable());
+    };
+  }, []);
 
   function addRelation() {
     setRelationshipsData((prev) => [
@@ -99,7 +143,7 @@ function AddTable(props) {
               <h5>Name</h5>
               <h5>Description</h5>
               <h5>Data type</h5>
-              <h5>Delete</h5>
+              <h5 className={styles.h5Delete}>Delete</h5>
             </div>
 
             {columnsData.map((column, id) => {
@@ -127,29 +171,17 @@ function AddTable(props) {
                     onChange={(e) => changeColumn(e, id)}
                   />
 
-                  <MdDelete
-                    className={styles.deleteIcon}
-                    size={21}
-                    onClick={() => {
-                      deleteColumn(id);
-                    }}
-                  />
+                  <div className={styles.delete}>
+                    <MdDelete
+                      className={styles.deleteIcon}
+                      size={21}
+                      onClick={() => {
+                        deleteColumn(id);
+                      }}
+                    />
+                  </div>
                 </div>
               );
-            })}
-          </div>
-
-          <div className={styles.rSelect}>
-            <div className={styles.header}>
-              <h4>Relationships</h4>
-              <RiAddFill
-                className={styles.addIcon}
-                size={28}
-                onClick={addRelation}
-              />
-            </div>
-            {relationshipsData.map((rship, id) => {
-              return <div>{rship.target}</div>;
             })}
           </div>
         </div>
@@ -161,5 +193,13 @@ function AddTable(props) {
     </div>
   );
 }
+
+AddTable.defaultProps = {
+  name: "",
+  description: "",
+  project: "",
+  columns: [],
+  relationships: [],
+};
 
 export default AddTable;

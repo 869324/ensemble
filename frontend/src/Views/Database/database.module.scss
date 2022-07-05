@@ -66,5 +66,28 @@
 }
 
 .tableDiv {
-  color: whitesmoke;
+  width: 90%;
+  margin: auto;
+  margin-bottom: 10px;
+  color: $textColor;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.tableDivActive {
+  width: 90%;
+  margin: auto;
+  margin-bottom: 10px;
+  color: black;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 17px;
+  background-color: $secondaryColor;
+  cursor: pointer;
+}
+
+.tableDiv:hover {
+  background-color: rgba(250, 250, 250, 0.3);
 }
