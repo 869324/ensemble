@@ -82,6 +82,19 @@ public class ProjectsController {
         return  null;
     }
 
+    @PostMapping(value = "getByUser")
+    public Object getByUser(@RequestBody Map<String, Object> project, HttpServletResponse response) {
+        Map<String, Object> map = storedProcedureCaller.call("getUserProjects", project);
+
+        if (!map.isEmpty()){
+            response.setStatus(HttpStatus.OK.value());
+            return  map.get("#result-set-1");
+        } else {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return  null;
+    }
+
 
     @PutMapping(value = "update")
     public Map<String, Object> update(@RequestBody Project project, HttpServletResponse response) {

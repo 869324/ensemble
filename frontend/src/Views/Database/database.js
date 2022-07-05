@@ -51,7 +51,7 @@ function Tables() {
     <div className={styles.panelView}>
       {modalState.showModal && (
         <Modal heading={"Add Table"}>
-          <AddTable />
+          <AddTable currentProject={currentProject} />
         </Modal>
       )}
       <h2 className={styles.h2}>Tables</h2>
