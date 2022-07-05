@@ -4,7 +4,12 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { RiAddFill } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux/es/exports";
-import { getTables } from "../../StateManagement/Reducers/tablesReducer";
+import Table from "../../Components/Table/table";
+import {
+  getTables,
+  resetGetTables,
+  selectTable,
+} from "../../StateManagement/Reducers/tablesReducer";
 import { debounce } from "lodash";
 import Modal from "../../Components/Modal/modal";
 import AddTable from "../../Components/AddTable/addTable";
@@ -18,7 +23,8 @@ function Tables() {
 
   const modalState = useSelector((state) => state.modal);
   const { currentProject } = useSelector((state) => state.projects);
-  const tablesState = useSelector((state) => state.tables);
+  const tablesState = useSelector((state) => state.tables.getTables);
+  const { currentTable } = useSelector((state) => state.tables);
 
   const [tablesData, setTablesData] = useState({
     project: currentProject,
@@ -34,8 +40,16 @@ function Tables() {
   }, [tablesData]);
 
   useEffect(() => {
+    const { tables } = tablesState;
+    if (tables.length > 0 && Object.keys(currentTable).length == 0) {
+      dispatch(selectTable(tables[0]));
+    }
+  }, [tablesState]);
+
+  useEffect(() => {
     return () => {
       dispatch(resetModal());
+      dispatch(resetGetTables());
     };
   }, []);
 
@@ -51,7 +65,7 @@ function Tables() {
     <div className={styles.panelView}>
       {modalState.showModal && (
         <Modal heading={"Add Table"}>
-          <AddTable currentProject={currentProject} />
+          <AddTable currentProject={currentProject} tablesData={tablesData} />
         </Modal>
       )}
       <h2 className={styles.h2}>Tables</h2>
@@ -61,7 +75,7 @@ function Tables() {
           <div className={styles.actions}>
             <input
               className={styles.search}
-              name="search"
+              name="name"
               placeholder="Search..."
               onChange={debouncedSearch}
             />
@@ -78,7 +92,17 @@ function Tables() {
           <div className={styles.rows}>
             {tablesState.tables.map((table, id) => {
               return (
-                <div key={id} className={styles.tableDiv}>
+                <div
+                  key={id}
+                  className={
+                    currentTable.tableId == table.tableId
+                      ? styles.tableDivActive
+                      : styles.tableDiv
+                  }
+                  onClick={() => {
+                    dispatch(selectTable(table));
+                  }}
+                >
                   {table.name}
                 </div>
               );
@@ -86,7 +110,9 @@ function Tables() {
           </div>
         </div>
 
-        <div className={styles.content}></div>
+        <div className={styles.content}>
+          <Table />
+        </div>
       </div>
     </div>
   );
