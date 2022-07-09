@@ -1,7 +1,7 @@
 import styles from "./modal.module.scss";
 
 import { VscChromeClose } from "react-icons/vsc";
-import { showModal } from "../../StateManagement/Reducers/modalReducer";
+import { resetModal } from "../../StateManagement/Reducers/modalReducer";
 import { useDispatch } from "react-redux";
 
 function Modal(props) {
@@ -17,7 +17,7 @@ function Modal(props) {
             className={styles.close}
             size={28}
             onClick={() => {
-              dispatch(showModal(false));
+              dispatch(resetModal());
             }}
           />
         </div>

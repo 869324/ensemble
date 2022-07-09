@@ -30,6 +30,10 @@
   margin-left: 10px;
   color: $textColor;
   font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 }
 
 .tablesDiv {
@@ -46,12 +50,13 @@
   justify-content: space-around;
 }
 
-.edit,
-.addRship {
-  @include button;
-  padding: 7px 40px;
-  background-color: $primaryColor;
-  color: black;
+.actions {
+  button {
+    @include button;
+    padding: 7px 40px;
+    background-color: $primaryColor;
+    color: black;
+  }
 }
 
 .delete {
@@ -99,4 +104,21 @@
 
 .rowData {
   @include rowData;
+}
+
+.deleteCol {
+  width: auto;
+  height: auto;
+  margin: auto;
+  @include centerContainerH;
+  padding: 5px;
+}
+
+.deleteIcon {
+  color: orangered;
+  border-radius: 5px;
+}
+
+.deleteIcon:hover {
+  background-color: rgba(250, 250, 250, 0.1);
 }

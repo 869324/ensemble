@@ -38,11 +38,11 @@ public class TablesController {
         List<Map<String, Object>> columns = (List<Map<String, Object>>)map.get("columns");
         List<Map<String, String>> relations = (List<Map<String, String>>)map.get("relationships");
 
-        List<Map<String, Object>> existingTables = jdbcTemplate.queryForList("select * from projects where name = '" + table.get("name") +"'" );
+        List<Map<String, Object>> existingTables = jdbcTemplate.queryForList("select * from tables where name = '" + table.get("name") +"'" );
         if (existingTables.size() > 0) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             Map<String, Object> res = new HashMap<>();
-            res.put("Error", "Name already in use!");
+            res.put("error", "Name already in use!");
             return res;
         }
         else {
@@ -57,6 +57,8 @@ public class TablesController {
                 for (Map<String, String> relation : relations) {
                     jdbcTemplate.update("insert into tableRelationships (relationshipId, column1, column2) values (?, ?, ?)", relation.get("column1").concat("_").concat(relation.get("column2")), relation.get("column1"), relation.get("column2"));
                 }
+
+                response.setStatus(HttpStatus.OK.value());
 
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -91,6 +93,13 @@ public class TablesController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return  null;
+    }
+
+    @PostMapping(value = "getColumns")
+    public Object getColumns(@RequestBody Map<String, Object> map, HttpServletResponse response) {
+        List<Map<String, Object>> columns = jdbcTemplate.queryForList("select * from columns where owner = ?", map.get("tableId"));
+
+        return  columns;
     }
 
 
