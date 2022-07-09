@@ -18,6 +18,7 @@ import { showModal } from "../../StateManagement/Reducers/modalReducer";
 import { MdDelete } from "react-icons/md";
 import EditTable from "../EditTable/editTable";
 import AddRelationship from "../AddRelationship/addRelationship";
+import AddColumn from "../AddColumn/addColumn";
 
 function Table(props) {
   const dispatch = useDispatch();
@@ -224,7 +225,7 @@ function Table(props) {
         )}
         {modalState.showModal && modalState.action == "addColumn" && (
           <Modal heading={"Add Column"}>
-            <AddRelationship tableId={currentTable.tableId} />
+            <AddColumn tableId={currentTable.tableId} />
           </Modal>
         )}
         <div className={styles.header}>
