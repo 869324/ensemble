@@ -4,13 +4,16 @@ import styles from "./addTable.module.scss";
 import {
   createTable,
   getTables,
-  resetCreateTable,
+  tableReset,
 } from "../../StateManagement/Reducers/tablesReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { RiAddFill, RiDeleteColumn } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import swal from "sweetalert";
-import { showModal } from "../../StateManagement/Reducers/modalReducer";
+import {
+  showModal,
+  resetModal,
+} from "../../StateManagement/Reducers/modalReducer";
 import { useNavigate } from "react-router-dom";
 
 function AddTable(props) {
@@ -20,27 +23,24 @@ function AddTable(props) {
   const tableState = useSelector((state) => state.tables.createTable);
 
   const [tableData, setTableData] = useState({
-    name: props.name,
-    description: props.description,
+    name: "",
+    description: "",
     project: props.currentProject,
   });
 
-  const [columnsData, setColumnsData] = useState(props.columns);
-  const [relationshipsData, setRelationshipsData] = useState(
-    props.relationships
-  );
+  const [columnsData, setColumnsData] = useState([]);
 
   useEffect(() => {
     const { loading, error, status, tried } = tableState;
-    console.log(tableState);
 
     if (tried) {
       if (status) {
+        dispatch(getTables(props.tablesData));
         swal({
           title: "Table has been created",
           icon: "success",
         });
-        dispatch(showModal(false));
+        dispatch(resetModal());
       } else if (loading) {
         swal({
           text: "Loading ...",
@@ -58,16 +58,9 @@ function AddTable(props) {
   useEffect(() => {
     return () => {
       dispatch(getTables(props.tablesData));
-      dispatch(resetCreateTable());
+      dispatch(tableReset("createTable"));
     };
   }, []);
-
-  function addRelation() {
-    setRelationshipsData((prev) => [
-      ...prev,
-      { sourceId: "", target: "", targetId: "" },
-    ]);
-  }
 
   function addColumn() {
     setColumnsData((prev) => [
@@ -99,7 +92,6 @@ function AddTable(props) {
       createTable({
         table: tableData,
         columns: columnsData,
-        relationships: relationshipsData,
       })
     );
   }
@@ -193,13 +185,5 @@ function AddTable(props) {
     </div>
   );
 }
-
-AddTable.defaultProps = {
-  name: "",
-  description: "",
-  project: "",
-  columns: [],
-  relationships: [],
-};
 
 export default AddTable;

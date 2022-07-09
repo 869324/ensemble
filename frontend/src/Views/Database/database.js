@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux/es/exports";
 import Table from "../../Components/Table/table";
 import {
   getTables,
-  resetGetTables,
+  tableReset,
   selectTable,
 } from "../../StateManagement/Reducers/tablesReducer";
 import { debounce } from "lodash";
@@ -41,15 +41,25 @@ function Tables() {
 
   useEffect(() => {
     const { tables } = tablesState;
-    if (tables.length > 0 && Object.keys(currentTable).length == 0) {
-      dispatch(selectTable(tables[0]));
+
+    if (tables.length > 0) {
+      if (Object.keys(currentTable).length == 0) {
+        dispatch(selectTable(tables[0]));
+      } else {
+        const index = tables.findIndex(
+          (table) => table.tableId == currentTable.tableId
+        );
+        if (index == -1) {
+          dispatch(selectTable(tables[0]));
+        }
+      }
     }
   }, [tablesState]);
 
   useEffect(() => {
     return () => {
       dispatch(resetModal());
-      dispatch(resetGetTables());
+      dispatch(tableReset("getTables"));
     };
   }, []);
 
@@ -63,7 +73,7 @@ function Tables() {
 
   return (
     <div className={styles.panelView}>
-      {modalState.showModal && (
+      {modalState.showModal && modalState.action == "addTable" && (
         <Modal heading={"Add Table"}>
           <AddTable currentProject={currentProject} tablesData={tablesData} />
         </Modal>
@@ -84,7 +94,7 @@ function Tables() {
               className={styles.addIcon}
               size={28}
               onClick={() => {
-                dispatch(showModal(true));
+                dispatch(showModal({ showModal: true, action: "addTable" }));
               }}
             />
           </div>
@@ -111,7 +121,7 @@ function Tables() {
         </div>
 
         <div className={styles.content}>
-          <Table />
+          <Table currentProject={currentProject} tablesData={tablesData} />
         </div>
       </div>
     </div>
