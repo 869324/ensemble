@@ -5,6 +5,7 @@ import UserDashboard from "../../Components/UserDashboard/userDashboard";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProjectOverview from "../ProjectOverview/projectOverview";
 import Database from "../Database/database";
+import Classes from "../Classes/classes";
 
 function Workbench() {
   return (
@@ -29,7 +30,7 @@ function Workbench() {
                 element={<ProjectOverview />}
               ></Route>
               <Route path="database" element={<Database />}></Route>
-              <Route path="projectOverview"></Route>
+              <Route path="classes" element={<Classes />}></Route>
               <Route path="projectOverview"></Route>
               <Route path="projectOverview"></Route>
               <Route path="projectOverview"></Route>

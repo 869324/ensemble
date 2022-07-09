@@ -4,6 +4,7 @@ import projects from "../Reducers/projectsReducer";
 import teams from "../Reducers/teamsReducer";
 import tables from "../Reducers/tablesReducer";
 import modal from "../Reducers/modalReducer";
+import classes from "../Reducers/classReducer";
 
 const rootReducer = combineReducers({
   user,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   teams,
   tables,
   modal,
+  classes,
 });
 
 const store = configureStore({

@@ -1,67 +1,87 @@
+import styles from "./class.module.scss";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
-  getColumns,
-  tableReset,
-  deleteColumn,
-  deleteRelationship,
-  deleteTable,
-  getTables,
-  getRelationships,
-  populateTable,
-} from "../../StateManagement/Reducers/tablesReducer";
-import styles from "./table.module.scss";
+  getAttributes,
+  classReset,
+  deleteAttribute,
+  deleteClass,
+  populateClass,
+  getClasses,
+  removeChild,
+  getChildren,
+} from "../../StateManagement/Reducers/classReducer";
+
 import swal from "sweetalert";
 import Modal from "../Modal/modal";
-import AddTable from "../AddTable/addTable";
 import { showModal } from "../../StateManagement/Reducers/modalReducer";
 import { MdDelete } from "react-icons/md";
 import EditTable from "../EditTable/editTable";
 import AddRelationship from "../AddRelationship/addRelationship";
-import AddColumn from "../AddColumn/addColumn";
 
-function Table(props) {
+function Class(props) {
   const dispatch = useDispatch();
 
-  const { currentTable } = useSelector((state) => state.tables);
-  const columnState = useSelector((state) => state.tables.getColumns);
-  const deleteTableState = useSelector((state) => state.tables.deleteTable);
-  const deleteColumnState = useSelector((state) => state.tables.deleteColumn);
-  const deleteRelationshipState = useSelector(
-    (state) => state.tables.deleteRelationship
+  const { currentClass } = useSelector((state) => state.classes);
+  const attributeState = useSelector((state) => state.classes.getAttributes);
+  const childrenState = useSelector((state) => state.classes.getChildren);
+  const deleteClassState = useSelector((state) => state.classes.deleteClass);
+  const removeChildState = useSelector((state) => state.classes.removeChild);
+  const deleteAttributeState = useSelector(
+    (state) => state.classes.deleteAttribute
   );
+
   const modalState = useSelector((state) => state.modal);
 
   useEffect(() => {
-    dispatch(getColumns(currentTable.tableId));
-    dispatch(getRelationships(currentTable.tableId));
-  }, [currentTable.tableId]);
+    dispatch(getAttributes(currentClass.classId));
+    dispatch(getChildren(currentClass.classId));
+  }, [currentClass.classId]);
 
   useEffect(() => {
-    const { tried, status, loading, columns } = columnState;
+    const { tried, status, loading, attributes } = attributeState;
     if (tried && status) {
       dispatch(
-        populateTable({
-          columns: columns,
+        populateClass({
+          attributes: attributes,
         })
       );
     } else if (tried && !status && !loading) {
       swal({
         icon: "error",
-        title: "Problem loading columns",
+        title: "Problem loading class attributes",
         text: "Try again later",
       });
     }
-  }, [columnState]);
+  }, [attributeState]);
 
   useEffect(() => {
-    const { loading, error, status, tried } = deleteTableState;
+    const { tried, status, loading, children } = childrenState;
+    if (tried && status) {
+      dispatch(
+        populateClass({
+          children: children,
+        })
+      );
+    } else if (tried && !status && !loading) {
+      swal({
+        icon: "error",
+        title: "Problem loading class children",
+        text: "Try again later",
+      });
+    }
+  }, [childrenState]);
+
+  useEffect(() => {
+    const { loading, error, status, tried } = deleteClassState;
 
     if (tried) {
       if (status) {
-        dispatch(getTables(props.tablesData));
+        dispatch(getClasses(props.classData));
         swal({
-          title: "Table has been deleted",
+          title: "Class has been deleted",
           icon: "success",
         });
       } else if (loading) {
@@ -76,16 +96,16 @@ function Table(props) {
         });
       }
     }
-  }, [deleteTableState]);
+  }, [deleteClassState]);
 
   useEffect(() => {
-    const { loading, error, status, tried } = deleteColumnState;
+    const { loading, error, status, tried } = deleteAttributeState;
 
     if (tried) {
       if (status) {
-        dispatch(getColumns(currentTable.tableId));
+        dispatch(getAttributes(currentClass.classId));
         swal({
-          title: "Column has been deleted",
+          title: "Attribute has been deleted",
           icon: "success",
         });
       } else if (loading) {
@@ -100,16 +120,16 @@ function Table(props) {
         });
       }
     }
-  }, [deleteColumnState]);
+  }, [deleteAttributeState]);
 
   useEffect(() => {
-    const { loading, error, status, tried } = deleteRelationshipState;
+    const { loading, error, status, tried } = removeChildState;
 
     if (tried) {
       if (status) {
-        dispatch(getRelationships(currentTable.tableId));
+        dispatch(getChildren(currentClass.classId));
         swal({
-          title: "Relationship has been deleted",
+          title: "Child has been removed",
           icon: "success",
         });
       } else if (loading) {
@@ -124,29 +144,28 @@ function Table(props) {
         });
       }
     }
-  }, [deleteRelationshipState]);
+  }, [removeChildState]);
 
   useEffect(() => {
     return () => {
-      dispatch(tableReset("getColumns"));
-      dispatch(tableReset("deleteColumn"));
-      dispatch(tableReset("deleteRelationship"));
-      dispatch(tableReset("deleteTable"));
+      dispatch(classReset("getAttributes"));
+      dispatch(classReset("deleteAttribute"));
+      dispatch(classReset("deleteClass"));
     };
   }, []);
 
-  function handleColumn(action, data) {
+  function handleAttribute(action, data) {
     switch (action) {
       case "delete":
         swal({
           icon: "warning",
           title: "Confirm",
-          text: `Are you sure you want to delete this column?`,
+          text: `Are you sure you want to delete this attribute?`,
           buttons: ["No", "Yes"],
           dangerMode: true,
         }).then((isConfirm) => {
           if (isConfirm) {
-            dispatch(deleteColumn(data));
+            dispatch(deleteAttribute(data));
           }
         });
 
@@ -156,28 +175,18 @@ function Table(props) {
     }
   }
 
-  function getColName(relationship, status) {
-    const id =
-      status == "source"
-        ? relationship.sourceColumn
-        : relationship.targetColumn;
-    const col = currentTable.columns.find((column) => column.columnId == id);
-
-    return col ? col.name : relationship.targetName;
-  }
-
-  function handleRelationship(action, data) {
+  function handleChild(action, data) {
     switch (action) {
       case "delete":
         swal({
           icon: "warning",
           title: "Confirm",
-          text: `Are you sure you want to delete this relationship?`,
+          text: `Are you sure you want to remove this class from children?`,
           buttons: ["No", "Yes"],
           dangerMode: true,
         }).then((isConfirm) => {
           if (isConfirm) {
-            dispatch(deleteRelationship(data));
+            dispatch(removeChild(data));
           }
         });
 
@@ -187,96 +196,104 @@ function Table(props) {
     }
   }
 
-  function handleTable() {
+  function handleClass() {
     swal({
       icon: "warning",
       title: "Confirm",
-      text: `Are you sure you want to delete this table?`,
+      text: `Are you sure you want to delete this class?`,
       buttons: ["No", "Yes"],
       dangerMode: true,
     }).then((isConfirm) => {
       if (isConfirm) {
-        dispatch(deleteTable(currentTable.tableId));
+        dispatch(deleteClass(currentClass.classId));
       }
     });
   }
 
-  if (currentTable) {
+  function getParentName(id) {
+    const myClass = props.classes.find((parent) => parent.classId == id);
+    return myClass ? myClass.name : null;
+  }
+
+  if (currentClass) {
     return (
       <div className={styles.main}>
-        {modalState.showModal && modalState.action == "editTable" && (
-          <Modal heading={"Edit Table"}>
+        {modalState.showModal && modalState.action == "editClass" && (
+          <Modal heading={"Edit Class"}>
             <EditTable
-              name={currentTable.name}
+              name={currentClass.name}
               project={props.currentProject}
-              description={currentTable.description}
-              tableId={currentTable.tableId}
+              description={currentClass.description}
+              classId={currentClass.classId}
               tablesData={props.tablesData}
             />
           </Modal>
         )}
-        {modalState.showModal && modalState.action == "addRelationship" && (
-          <Modal heading={"Add Relationship"}>
+        {modalState.showModal && modalState.action == "addAttribute" && (
+          <Modal heading={"Add Attribute"}>
             <AddRelationship
-              sourceColumns={currentTable.columns}
-              tableId={currentTable.tableId}
+              sourceColumns={currentClass.columns}
+              classId={currentClass.classId}
             />
           </Modal>
         )}
-        {modalState.showModal && modalState.action == "addColumn" && (
-          <Modal heading={"Add Column"}>
-            <AddColumn tableId={currentTable.tableId} />
-          </Modal>
-        )}
+
         <div className={styles.header}>
           <div className={styles.headerDiv}>
             <label className={styles.headerDesc}>Name:</label>
-            <label className={styles.headerValue}>{currentTable.name}</label>
+            <label className={styles.headerValue}>{currentClass.name}</label>
           </div>
 
           <div className={styles.headerDiv}>
             <label className={styles.headerDesc}>Description:</label>
             <label className={styles.headerValue}>
-              {currentTable.description}
+              {currentClass.description}
             </label>
           </div>
-
+          {currentClass.parent &&
+            currentClass.parent != "" &&
+            getParentName(currentClass.parent) && (
+              <div className={styles.headerDiv}>
+                <label className={styles.headerDesc}>Parent:</label>
+                <label className={styles.headerValue}>
+                  {getParentName(currentClass.parent)}
+                </label>
+              </div>
+            )}
           <div className={styles.headerDiv}>
-            <button className={styles.delete} onClick={handleTable}>
-              Delete Table
+            <button className={styles.delete} onClick={handleClass}>
+              Delete Class
             </button>
           </div>
         </div>
 
         <div className={styles.tablesDiv}>
           <div className={styles.columns}>
-            <h4>Columns</h4>
+            <h4>Attributes</h4>
 
             <table className={styles.table}>
               <thead>
                 <tr>
                   <th>No.</th>
                   <th>Name</th>
-                  <th>Description</th>
                   <th>Data type</th>
                   <th>Delete</th>
                 </tr>
               </thead>
 
               <tbody>
-                {currentTable.columns.map((column, id) => {
+                {currentClass.attributes.map((attribute, id) => {
                   return (
                     <tr key={id} className={styles.rowData}>
                       <td>{id + 1}</td>
-                      <td>{column.name}</td>
-                      <td>{column.description}</td>
-                      <td>{column.datatype}</td>
+                      <td>{attribute.name}</td>
+                      <td>{attribute.datatype}</td>
                       <td className={styles.deleteCol}>
                         <MdDelete
                           className={styles.deleteIcon}
                           size={21}
                           onClick={() => {
-                            handleColumn("delete", column.columnId);
+                            handleAttribute("delete", attribute.attributeId);
                           }}
                         />
                       </td>
@@ -288,34 +305,27 @@ function Table(props) {
           </div>
 
           <div className={styles.relationships}>
-            <h4>Relationships</h4>
+            <h4>Children</h4>
 
             <table className={styles.table}>
               <thead>
                 <th>No.</th>
-                <th>Column (Source)</th>
-                <th>Table (Target)</th>
-                <th>Column (Target)</th>
+                <th>Class</th>
                 <th>Delete</th>
               </thead>
 
               <tbody>
-                {currentTable.relationships.map((relationship, id) => {
+                {currentClass.children.map((child, id) => {
                   return (
                     <tr key={id} className={styles.rowData}>
                       <td>{id + 1}</td>
-                      <td>{getColName(relationship, "source")}</td>
-                      <td>{relationship.referenceTable}</td>
-                      <td>{getColName(relationship, "target")}</td>
+                      <td>{child.name}</td>
                       <td className={styles.deleteCol}>
                         <MdDelete
                           className={styles.deleteIcon}
                           size={21}
                           onClick={() => {
-                            handleRelationship(
-                              "delete",
-                              relationship.relationshipId
-                            );
+                            handleChild("delete", child.classId);
                           }}
                         />
                       </td>
@@ -330,26 +340,17 @@ function Table(props) {
         <div className={styles.actions}>
           <button
             onClick={() => {
-              dispatch(showModal({ showModal: true, action: "editTable" }));
+              dispatch(showModal({ showModal: true, action: "editClass" }));
             }}
           >
-            Edit Table
+            Edit Class
           </button>
           <button
             onClick={() => {
-              dispatch(showModal({ showModal: true, action: "addColumn" }));
+              dispatch(showModal({ showModal: true, action: "addAttribute" }));
             }}
           >
-            Add Column
-          </button>
-          <button
-            onClick={() => {
-              dispatch(
-                showModal({ showModal: true, action: "addRelationship" })
-              );
-            }}
-          >
-            Add Relationship
+            Add Attribute
           </button>
         </div>
       </div>
@@ -357,4 +358,4 @@ function Table(props) {
   }
 }
 
-export default Table;
+export default Class;

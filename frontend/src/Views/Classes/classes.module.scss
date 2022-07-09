@@ -1,0 +1,93 @@
+@import "../../globalStyles/global";
+
+.panelView {
+  @include panelView;
+}
+
+.h2 {
+  height: 8%;
+  text-align: center;
+  color: $secondaryColor;
+  margin: 0px;
+}
+
+.body {
+  width: 100%;
+  height: 92%;
+  @include centerContainerH;
+  justify-content: space-between;
+}
+
+.data {
+  width: 20%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.content {
+  width: 79%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.actions {
+  width: 100%;
+  height: 8%;
+  @include centerContainerH;
+  justify-content: space-around;
+}
+
+.search {
+  width: 60%;
+  border: none;
+  border-bottom: 1px solid $secondaryColor;
+  background-color: transparent;
+  color: whitesmoke;
+  font-size: 16px;
+}
+
+.search:focus {
+  outline: none;
+}
+
+.addIcon {
+  color: $secondaryColor;
+  border-radius: 5px;
+}
+
+.addIcon:hover {
+  background-color: rgba(250, 250, 250, 0.3);
+}
+
+.rows {
+  width: 100%;
+  height: calc(92% - 20px);
+  margin-top: 20px;
+}
+
+.tableDiv {
+  width: 90%;
+  margin: auto;
+  margin-bottom: 10px;
+  color: $textColor;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.tableDivActive {
+  width: 90%;
+  margin: auto;
+  margin-bottom: 10px;
+  color: black;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 17px;
+  background-color: $secondaryColor;
+  cursor: pointer;
+}
+
+.tableDiv:hover {
+  background-color: rgba(250, 250, 250, 0.3);
+}
