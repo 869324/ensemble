@@ -6,6 +6,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import ProjectOverview from "../ProjectOverview/projectOverview";
 import Database from "../Database/database";
 import Classes from "../Classes/classes";
+import Endpoints from "../Endpoints/endpoints";
 
 function Workbench() {
   return (
@@ -31,7 +32,7 @@ function Workbench() {
               ></Route>
               <Route path="database" element={<Database />}></Route>
               <Route path="classes" element={<Classes />}></Route>
-              <Route path="projectOverview"></Route>
+              <Route path="endpoints" element={<Endpoints />}></Route>
               <Route path="projectOverview"></Route>
               <Route path="projectOverview"></Route>
             </Routes>

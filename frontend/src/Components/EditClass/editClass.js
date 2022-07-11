@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
-import styles from "./editTable.module.scss";
+import styles from "./editClass.module.scss";
 
 import {
-  updateTable,
-  tableReset,
-  getTables,
-  selectTable,
-} from "../../StateManagement/Reducers/tablesReducer";
-
+  updateClass,
+  classReset,
+  getClasses,
+  selectClass,
+} from "../../StateManagement/Reducers/classReducer";
 import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
 import { resetModal } from "../../StateManagement/Reducers/modalReducer";
-import { useNavigate } from "react-router-dom";
 
-function EditTable(props) {
+function EditClass(props) {
   const dispatch = useDispatch();
 
-  const updateState = useSelector((state) => state.tables.updateTable);
+  const updateState = useSelector((state) => state.classes.updateClass);
 
-  const [tableData, setTableData] = useState({
-    tableId: props.tableId,
+  const [classData, setClassData] = useState({
+    classId: props.classId,
     name: props.name,
     description: props.description,
-    project: props.project,
+    parent: props.parent ? props.parent : null,
   });
 
   useEffect(() => {
@@ -31,13 +29,14 @@ function EditTable(props) {
     if (tried) {
       if (status) {
         dispatch(
-          selectTable({
-            name: tableData.name,
-            description: tableData.description,
+          selectClass({
+            name: classData.name,
+            description: classData.description,
+            parent: classData.parent,
           })
         );
         swal({
-          title: "Table has been updated",
+          title: "Class has been updated",
           icon: "success",
         });
         dispatch(resetModal());
@@ -57,18 +56,18 @@ function EditTable(props) {
 
   useEffect(() => {
     return () => {
-      dispatch(getTables(props.tablesData));
-      dispatch(tableReset("updateTable"));
+      dispatch(getClasses(props.classData));
+      dispatch(classReset("updateClass"));
     };
   }, []);
 
-  function handleTableChange(e) {
-    setTableData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  function handleClassChange(e) {
+    setClassData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
   function submit(e) {
     e.preventDefault();
-    dispatch(updateTable(tableData));
+    dispatch(updateClass(classData));
   }
 
   return (
@@ -76,14 +75,29 @@ function EditTable(props) {
       <form onSubmit={submit} className={styles.form}>
         <div className={styles.tableData}>
           <div className={styles.inputDiv}>
-            <label className={styles.label}>Table Name</label>
+            <label className={styles.label}>Class Name</label>
             <input
               className={styles.input}
               name="name"
-              value={tableData.name}
-              onChange={handleTableChange}
+              value={classData.name}
+              onChange={handleClassChange}
               required
             />
+          </div>
+
+          <div className={styles.inputDiv}>
+            <label className={styles.label}>Parent</label>
+            <select
+              className={styles.select}
+              name="parent"
+              value={classData.parent}
+              onChange={handleClassChange}
+            >
+              <option value="">None</option>
+              {props.classes.map((myClass) => {
+                return <option value={myClass.classId}>{myClass.name}</option>;
+              })}
+            </select>
           </div>
 
           <div className={styles.inputDiv}>
@@ -91,8 +105,8 @@ function EditTable(props) {
             <textarea
               className={styles.input}
               name="description"
-              value={tableData.description}
-              onChange={handleTableChange}
+              value={classData.description}
+              onChange={handleClassChange}
             />
           </div>
         </div>
@@ -105,4 +119,4 @@ function EditTable(props) {
   );
 }
 
-export default EditTable;
+export default EditClass;

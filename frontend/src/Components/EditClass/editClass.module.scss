@@ -1,0 +1,67 @@
+@import "../../globalStyles/global";
+
+.main {
+  width: 100%;
+  height: 100%;
+}
+
+.form {
+  width: 100%;
+  height: 100%;
+  @include centerContainerV;
+  justify-content: space-around;
+}
+
+.tableData {
+  width: 95%;
+  height: 11%;
+  @include centerContainerH;
+  justify-content: space-between;
+}
+
+.inputDiv {
+  @include centerContainerV;
+  width: 95%;
+  align-items: flex-start;
+  margin-bottom: 20px;
+
+  label {
+    margin-right: 10px;
+  }
+
+  input {
+    padding: 7px;
+    font-size: 17px;
+    border: none;
+    border-radius: 7px;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  textarea {
+    min-width: 50%;
+    max-width: 70%;
+    min-height: 20%;
+    max-height: 30%;
+    border-radius: 7px;
+    padding: 7px;
+  }
+}
+
+.submit {
+  width: 40%;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: $primaryColor;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.select {
+  font-size: 17px;
+  padding: 3px 5px;
+  border-radius: 7px;
+}

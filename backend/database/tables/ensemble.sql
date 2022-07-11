@@ -172,6 +172,7 @@ CREATE TABLE ensemble.dbo.endpoints (
 	name varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	description varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	project varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	url varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	CONSTRAINT PK__endpoint__5FF6331408AF4099 PRIMARY KEY (endpointId),
 	CONSTRAINT FK_ENDPOINT_PROJECT FOREIGN KEY (project) REFERENCES ensemble.dbo.projects(projectId) ON DELETE CASCADE
 );

@@ -177,8 +177,8 @@ public class UsersController {
 
 
 
-    @DeleteMapping(value = "delete", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public Map<String, Object> deleteUser(@RequestParam String userId, HttpServletResponse response) {
+    @DeleteMapping(value = "delete/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public Map<String, Object> deleteUser(@PathVariable(value = "userId") String userId, HttpServletResponse response) {
         int result = jdbcTemplate.update("delete from users where userId = ?", userId);
         if (result > 0) {
             response.setStatus(HttpStatus.OK.value());
