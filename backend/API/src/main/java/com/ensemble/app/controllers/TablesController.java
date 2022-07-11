@@ -36,7 +36,6 @@ public class TablesController {
     public Object create(@RequestBody Map<String, Object> map, HttpServletResponse response) {
         Map<String, Object> table = (Map<String, Object>) map.get("table");
         List<Map<String, Object>> columns = (List<Map<String, Object>>)map.get("columns");
-        List<Map<String, String>> relations = (List<Map<String, String>>)map.get("relationships");
 
         List<Map<String, Object>> existingTables = jdbcTemplate.queryForList("select * from tables where name = '" + table.get("name") +"'" );
         if (existingTables.size() > 0) {
@@ -54,10 +53,6 @@ public class TablesController {
                     jdbcTemplate.update("insert into columns (columnId, name, description, datatype, owner) values (?, ?, ?, ?, ?)", column.get("columnId"), column.get("name"), column.get("description"), column.get("dataType"), table.get("tableId"));
                 }
 
-                for (Map<String, String> relation : relations) {
-                    jdbcTemplate.update("insert into tableRelationships (relationshipId, column1, column2) values (?, ?, ?)", relation.get("column1").concat("_").concat(relation.get("column2")), relation.get("column1"), relation.get("column2"));
-                }
-
                 response.setStatus(HttpStatus.OK.value());
 
             } else {
@@ -71,16 +66,17 @@ public class TablesController {
 
 
 
-    @DeleteMapping(value = "delete")
-    public Map<String, Object> deleteProject(@RequestParam String tableId, HttpServletResponse response) {
+    @DeleteMapping(value = "delete/{tableId}")
+    public Object deleteTable(@PathVariable(value = "tableId") String tableId, HttpServletResponse response) {
         int result = jdbcTemplate.update("delete from tables where tableId = ?", tableId);
 
-        if (result < 1) {
+        if (result > 0) {
+            response.setStatus(HttpStatus.OK.value());
+        } else {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return null;
     }
-
 
 
     @PostMapping(value = "get")
@@ -102,6 +98,57 @@ public class TablesController {
         return  columns;
     }
 
+    @PostMapping(value = "getRelationships")
+    public Object getRelationships(@RequestBody Map<String, Object> map, HttpServletResponse response) {
+        String query = "select r.relationshipId, r.column1 as sourceColumn, t.name as referenceTable, r.column2 as targetColumn, c.name as targetName from tableRelationships r "+
+                "inner join columns c on r.column2 = c.columnId inner join tables t on t.tableId = c.owner "+
+                "where r.owner like '%"+map.get("tableId")+"%'";
+        List<Map<String, Object>> columns = jdbcTemplate.queryForList(query);
+
+        return  columns;
+    }
+
+    @PostMapping(value = "addColumn")
+    public Object addColumn(@RequestBody Map<String, Object> map, HttpServletResponse response) {
+        String query = "insert into columns (columnId, name, description, datatype, owner) values (?, ?, ?, ?, ?)";
+        int result = jdbcTemplate.update(query, UUID.randomUUID().toString(), map.get("name"), map.get("description"), map.get("dataType"), map.get("owner"));
+        if (result == 0) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return  null;
+    }
+
+    @PostMapping(value = "addRelationship")
+    public Object addRelationship(@RequestBody Map<String, Object> map, HttpServletResponse response) {
+        String query = "insert into tableRelationships (relationshipId, column1, column2, owner) values (?, ?, ?, ?)";
+        String table1 = map.get("tableId").toString();
+        String table2 = map.get("referenceTable").toString();
+        int result = jdbcTemplate.update(query, UUID.randomUUID().toString(), map.get("sourceColumn"), map.get("targetColumn"), table1+"_"+table2);
+        if (result == 0) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return  null;
+    }
+
+    @DeleteMapping(value = "deleteColumn/{columnId}")
+    public Map<String, Object> deleteColumn(@PathVariable(value = "columnId") String columnId, HttpServletResponse response) {
+        int result = jdbcTemplate.update("delete from columns where columnId = ?", columnId);
+
+        if (result < 1) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return null;
+    }
+
+    @DeleteMapping(value = "deleteRelationship/{relationshipId}")
+    public Map<String, Object> deleteRelationship(@PathVariable(value = "relationshipId") String relationshipId, HttpServletResponse response) {
+        int result = jdbcTemplate.update("delete from tableRelationships where relationshipId = ?", relationshipId);
+
+        if (result < 1) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return null;
+    }
 
     @PutMapping(value = "update")
     public Map<String, Object> update(@RequestBody Table table, HttpServletResponse response) {

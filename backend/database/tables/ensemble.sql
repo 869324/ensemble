@@ -223,6 +223,7 @@ CREATE TABLE ensemble.dbo.tableRelationships (
 	relationshipId varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	column1 varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	column2 varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	owner varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	CONSTRAINT PK__tableRel__4BCCCED7190A471C PRIMARY KEY (relationshipId),
 	CONSTRAINT FK_COLUMN1 FOREIGN KEY (column1) REFERENCES ensemble.dbo.columns(columnId) ON DELETE CASCADE,
 	CONSTRAINT FK_COLUMN2 FOREIGN KEY (column2) REFERENCES ensemble.dbo.columns(columnId)
@@ -242,4 +243,20 @@ CREATE TABLE ensemble.dbo.teamMembers (
 	CONSTRAINT PK__teamMemb__86AA3B17BDEE95FA PRIMARY KEY (membershipId),
 	CONSTRAINT FK_MEMBER FOREIGN KEY ([member]) REFERENCES ensemble.dbo.users(userId) ON DELETE CASCADE,
 	CONSTRAINT FK_TEAM FOREIGN KEY (team) REFERENCES ensemble.dbo.teams(teamId) ON DELETE CASCADE
+);
+
+
+-- ensemble.dbo.[attributes] definition
+
+-- Drop table
+
+-- DROP TABLE ensemble.dbo.[attributes];
+
+CREATE TABLE ensemble.dbo.[attributes] (
+	attributeId varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	name varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	datatype varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	owner varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	CONSTRAINT PK__attribut__03B803F0B77A03AD PRIMARY KEY (attributeId),
+	CONSTRAINT FK_ATTRIBUTE_OWNER FOREIGN KEY (owner) REFERENCES ensemble.dbo.classes(classId) ON DELETE CASCADE
 );
