@@ -28,6 +28,7 @@ The frontend is done in react while the backend is done in springboot
    4 Incase of SSMS; refresh the panel on the left and select the new database from the dropdown as the current database  
    5 From SSMS/DBeaver open the sql script located in backend/database/tables; the file is named "ensemble.sql"  
    6 Run the script; This will create the tables  
+   7 From the same folder run the script "admin.sql" to create the initial admin account
    7 To see the database schema/design right click on the schema (dbo) and select ER Diagram  
    8 Open and run all sql scripts located in backend/database/stored procedures  
   
