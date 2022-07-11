@@ -1,18 +1,20 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import user from "../Reducers/userReducer";
-import projects from "../Reducers/projectsReducer";
-import teams from "../Reducers/teamsReducer";
-import tables from "../Reducers/tablesReducer";
-import modal from "../Reducers/modalReducer";
-import classes from "../Reducers/classReducer";
+import userReducer from "../Reducers/userReducer";
+import projectsReducer from "../Reducers/projectsReducer";
+import teamsReducer from "../Reducers/teamsReducer";
+import tablesReducer from "../Reducers/tablesReducer";
+import modalReducer from "../Reducers/modalReducer";
+import classReducer from "../Reducers/classReducer";
+import endpointReducer from "../Reducers/endpointReducer";
 
 const rootReducer = combineReducers({
-  user,
-  projects,
-  teams,
-  tables,
-  modal,
-  classes,
+  user: userReducer,
+  projects: projectsReducer,
+  teams: teamsReducer,
+  tables: tablesReducer,
+  modal: modalReducer,
+  classes: classReducer,
+  endpoints: endpointReducer,
 });
 
 const store = configureStore({

@@ -20,6 +20,8 @@ import { showModal } from "../../StateManagement/Reducers/modalReducer";
 import { MdDelete } from "react-icons/md";
 import EditTable from "../EditTable/editTable";
 import AddRelationship from "../AddRelationship/addRelationship";
+import AddAttribute from "../AddAttribute/addAttribute";
+import EditClass from "../EditClass/editClass";
 
 function Class(props) {
   const dispatch = useDispatch();
@@ -220,21 +222,19 @@ function Class(props) {
       <div className={styles.main}>
         {modalState.showModal && modalState.action == "editClass" && (
           <Modal heading={"Edit Class"}>
-            <EditTable
+            <EditClass
               name={currentClass.name}
               project={props.currentProject}
               description={currentClass.description}
               classId={currentClass.classId}
-              tablesData={props.tablesData}
+              classes={props.classes}
+              parent={currentClass.parent}
             />
           </Modal>
         )}
         {modalState.showModal && modalState.action == "addAttribute" && (
           <Modal heading={"Add Attribute"}>
-            <AddRelationship
-              sourceColumns={currentClass.columns}
-              classId={currentClass.classId}
-            />
+            <AddAttribute classId={currentClass.classId} />
           </Modal>
         )}
 
@@ -277,7 +277,7 @@ function Class(props) {
                   <th>No.</th>
                   <th>Name</th>
                   <th>Data type</th>
-                  <th>Delete</th>
+                  <th className={styles.hDelete}>Delete</th>
                 </tr>
               </thead>
 
@@ -311,7 +311,7 @@ function Class(props) {
               <thead>
                 <th>No.</th>
                 <th>Class</th>
-                <th>Delete</th>
+                <th className={styles.hDelete}>Delete</th>
               </thead>
 
               <tbody>

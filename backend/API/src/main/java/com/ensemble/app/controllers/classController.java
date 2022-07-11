@@ -148,7 +148,7 @@ public class classController {
             return Map.of("Error", "Name is already in use!");
         }
         else {
-            int result = jdbcTemplate.update("update classes set name = ?, description = ?, project = ? where classId = ?", map.get("name"), map.get("description"), map.get("project"), map.get("classId"));
+            int result = jdbcTemplate.update("update classes set name = ?, description = ?, parent = ? where classId = ?", map.get("name"), map.get("description"), map.get("parent"), map.get("classId"));
             if (result > 0) {
                 response.setStatus(HttpStatus.OK.value());
             } else {
