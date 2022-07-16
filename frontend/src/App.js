@@ -2,9 +2,9 @@ import "./App.module.scss";
 
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
-import User from "./Views/User/user";
-import Login from "./Views/Login/login";
-import Signup from "./Views/Signup/signup";
+import User from "./Components/User/user";
+import Login from "./Components/Login/login";
+import Signup from "./Components/Signup/signup";
 
 function App() {
   return (
