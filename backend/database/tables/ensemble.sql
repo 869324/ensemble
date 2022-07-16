@@ -1,19 +1,6 @@
 -- DROP SCHEMA dbo;
 
 CREATE SCHEMA dbo;
--- ensemble.dbo.operations definition
-
--- Drop table
-
--- DROP TABLE ensemble.dbo.operations;
-
-CREATE TABLE ensemble.dbo.operations (
-	id int IDENTITY(1,1) NOT NULL,
-	name varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	CONSTRAINT PK__operatio__3213E83F9700025F PRIMARY KEY (id)
-);
-
-
 -- ensemble.dbo.roles definition
 
 -- Drop table
@@ -54,22 +41,6 @@ CREATE TABLE ensemble.dbo.meetings (
 	endTime datetime NULL,
 	CONSTRAINT PK__meetings__5C5E6E04C39B7B8E PRIMARY KEY (meetingId),
 	CONSTRAINT FK_MEETING_TEAM FOREIGN KEY (team) REFERENCES ensemble.dbo.teams(teamId) ON DELETE CASCADE
-);
-
-
--- ensemble.dbo.permissions definition
-
--- Drop table
-
--- DROP TABLE ensemble.dbo.permissions;
-
-CREATE TABLE ensemble.dbo.permissions (
-	id varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	role_id int NOT NULL,
-	operation_id int NOT NULL,
-	CONSTRAINT PK__permissi__3213E83F652F54AD PRIMARY KEY (id),
-	CONSTRAINT FK_OPERATION FOREIGN KEY (operation_id) REFERENCES ensemble.dbo.operations(id),
-	CONSTRAINT FK_ROLE FOREIGN KEY (role_id) REFERENCES ensemble.dbo.roles(id)
 );
 
 

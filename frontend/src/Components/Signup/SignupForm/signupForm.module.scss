@@ -1,0 +1,29 @@
+@import "../../../globalStyles/global";
+
+.form {
+  @include centerContainerV;
+  width: 70%;
+  height: 70%;
+
+  button {
+    @include button;
+    width: 50%;
+  }
+}
+
+.inputDiv {
+  @include inputDiv;
+}
+.label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.input {
+  @include input;
+  width: 100%;
+}
+
+.input:focus {
+  @include input;
+}
