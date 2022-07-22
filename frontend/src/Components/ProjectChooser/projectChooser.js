@@ -8,7 +8,7 @@ import Sort from "../../Components/Sort/sort";
 import { debounce } from "lodash";
 import {
   getProjects,
-  resetProjects,
+  projectReset,
   selectProject,
 } from "../../StateManagement/Reducers/projectsReducer";
 
@@ -16,7 +16,7 @@ function ProjectChooser(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getProjectsState = useSelector((state) => state.projects);
+  const getProjectsState = useSelector((state) => state.projects.getProjects);
   const { user } = useSelector((state) => state.user);
 
   const [projectsData, setProjectsData] = useState({
@@ -33,7 +33,7 @@ function ProjectChooser(props) {
 
   useEffect(() => {
     return () => {
-      dispatch(resetProjects());
+      dispatch(projectReset("getProjects"));
     };
   }, []);
 
@@ -92,7 +92,7 @@ function ProjectChooser(props) {
                 <tr
                   key={id}
                   className={styles.rowData}
-                  onClick={() => chooseProject(project.projectId)}
+                  onClick={() => chooseProject(project)}
                 >
                   <td>{id + 1}</td>
                   <td>{project.name}</td>

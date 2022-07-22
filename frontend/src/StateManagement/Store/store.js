@@ -7,6 +7,7 @@ import modalReducer from "../Reducers/modalReducer";
 import classReducer from "../Reducers/classReducer";
 import endpointReducer from "../Reducers/endpointReducer";
 import notesReducer from "../Reducers/notesReducer";
+import tasksReducer from "../Reducers/tasksReducer";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   classes: classReducer,
   endpoints: endpointReducer,
   notes: notesReducer,
+  tasks: tasksReducer,
 });
 
 const store = configureStore({

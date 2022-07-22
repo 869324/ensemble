@@ -79,7 +79,7 @@ function UserDashboard() {
       </NavLink>
 
       <NavLink
-        to="taks"
+        to="tasks"
         className={(navData) =>
           navData.isActive ? styles.active : styles.link
         }

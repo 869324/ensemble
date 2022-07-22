@@ -1,0 +1,83 @@
+@import "../../../globalStyles/global";
+
+.main {
+  width: 100%;
+  height: 100%;
+  @include centerContainerV;
+  justify-content: space-around;
+}
+
+.header {
+  @include centerContainerH;
+  width: 95%;
+  justify-content: space-between;
+  height: 7%;
+}
+
+.headerDiv {
+  @include centerContainerH;
+  justify-content: start;
+  font-weight: 500;
+}
+
+.headerDesc {
+  color: $primaryColor;
+  font-size: 20px;
+}
+
+.headerValue {
+  margin-left: 10px;
+  color: $textColor;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.actions {
+  width: 95%;
+  height: 7%;
+  @include centerContainerH;
+  justify-content: space-around;
+}
+
+.actions {
+  button {
+    @include button;
+    padding: 7px 40px;
+    background-color: $primaryColor;
+    color: black;
+  }
+}
+
+.delete {
+  @include button;
+  padding: 5px 20px;
+  background-color: rgba(250, 250, 250, 0.1);
+  color: rgba(255, 0, 0, 0.8);
+  border-radius: 5px;
+}
+
+.delete:hover {
+  background-color: rgba(250, 250, 250, 0.2);
+}
+
+.dataDiv {
+  width: 95%;
+  height: 80%;
+  @include centerContainerH;
+
+  textarea {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    color: whitesmoke;
+    font-size: 17px;
+    background-color: rgba(250, 250, 250, 0.1);
+  }
+}

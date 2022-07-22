@@ -28,7 +28,7 @@ function Classes() {
   const { currentClass } = useSelector((state) => state.classes);
 
   const [classData, setClassData] = useState({
-    project: currentProject,
+    project: currentProject.projectId,
     name: null,
     classId: null,
     page: 1,

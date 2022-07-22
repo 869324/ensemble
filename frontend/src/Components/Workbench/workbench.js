@@ -8,6 +8,7 @@ import Database from "../Database/database";
 import Classes from "../Classes/classes";
 import Endpoints from "../Endpoints/endpoints";
 import Notes from "../Notes/notes";
+import Tasks from "../Tasks/tasks";
 
 function Workbench() {
   return (
@@ -35,6 +36,7 @@ function Workbench() {
               <Route path="classes" element={<Classes />}></Route>
               <Route path="endpoints" element={<Endpoints />}></Route>
               <Route path="notes" element={<Notes />}></Route>
+              <Route path="tasks" element={<Tasks />}></Route>
               <Route path="projectOverview"></Route>
             </Routes>
           </div>

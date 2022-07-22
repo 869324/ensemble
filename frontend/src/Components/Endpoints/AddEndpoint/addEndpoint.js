@@ -25,7 +25,7 @@ function AddEndpoint(props) {
     name: props.endpoint.name,
     description: props.endpoint.name,
     url: props.endpoint.url,
-    project: props.project,
+    project: props.project.projectId,
   });
 
   useEffect(() => {

@@ -31,7 +31,7 @@ function Notes() {
   const [childNotes, setChildNotes] = useState({});
 
   const [noteData, setNoteData] = useState({
-    project: currentProject,
+    project: currentProject.projectId,
     name: null,
     noteId: null,
     page: 1,

@@ -2,13 +2,19 @@ import { createSlice } from "@reduxjs/toolkit";
 import { BASE_API_PATH } from "../../Config/config";
 import axios from "axios";
 
-const initialState = {
+const universalState = {
   tried: false,
   loading: false,
   status: false,
-  projects: [],
   error: null,
-  currentProject: null,
+};
+
+const initialState = {
+  getProjects: { ...universalState, projects: [] },
+  createProject: { ...universalState },
+  updateProject: { ...universalState },
+  deleteProject: { ...universalState },
+  currentProject: {},
 };
 
 const projectsSlice = createSlice({
@@ -16,24 +22,54 @@ const projectsSlice = createSlice({
   initialState,
   reducers: {
     getProjects(state, action) {
-      return { ...state, ...action.payload };
+      return {
+        ...state,
+        getProjects: { ...state.getProjects, ...action.payload },
+      };
     },
 
-    create(state, action) {
-      return { ...state, ...action.payload };
+    createProject(state, action) {
+      return {
+        ...state,
+        createProject: { ...state.createProject, ...action.payload },
+      };
+    },
+
+    updateProject(state, action) {
+      return {
+        ...state,
+        updateProject: { ...state.updateProject, ...action.payload },
+      };
+    },
+
+    deleteProject(state, action) {
+      return {
+        ...state,
+        deleteProject: { ...state.deleteProject, ...action.payload },
+      };
     },
 
     selectProject(state, action) {
-      return { ...state, currentProject: action.payload };
-    },
-
-    resetProjects(state, action) {
       return {
         ...state,
-        loading: false,
-        tried: false,
-        status: false,
-        error: null,
+        currentProject: {
+          ...state.currentProject,
+          ...action.payload,
+        },
+      };
+    },
+
+    universalReset(state, action) {
+      const target = action.payload.state;
+      return {
+        ...state,
+        [target]: {
+          ...state[target],
+          tried: false,
+          loading: false,
+          status: false,
+          error: null,
+        },
       };
     },
   },
@@ -67,13 +103,13 @@ export const getProjects = (projectsData, type) => async (dispatch) => {
 };
 
 export const create = (project) => async (dispatch) => {
-  dispatch(projectsSlice.actions.create({ loading: true, tried: true }));
+  dispatch(projectsSlice.actions.createProject({ loading: true, tried: true }));
 
   axios
     .post(`${BASE_API_PATH}/projects/create`, project)
     .then((response) => {
       dispatch(
-        projectsSlice.actions.create({
+        projectsSlice.actions.createProject({
           loading: false,
           status: true,
           error: "",
@@ -82,7 +118,7 @@ export const create = (project) => async (dispatch) => {
     })
     .catch((error) => {
       dispatch(
-        projectsSlice.actions.create({
+        projectsSlice.actions.createProject({
           loading: false,
           status: false,
           error: error.response.data.error,
@@ -91,6 +127,10 @@ export const create = (project) => async (dispatch) => {
     });
 };
 
-export const { resetProjects, selectProject } = projectsSlice.actions;
+export const projectReset = (state) => async (dispatch) => {
+  dispatch(projectsSlice.actions.universalReset({ state: state }));
+};
+
+export const { selectProject } = projectsSlice.actions;
 
 export default projectsSlice.reducer;
