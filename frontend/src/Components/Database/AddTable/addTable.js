@@ -21,7 +21,7 @@ function AddTable(props) {
   const [tableData, setTableData] = useState({
     name: "",
     description: "",
-    project: props.currentProject,
+    project: props.currentProject.projectId,
   });
 
   const [columnsData, setColumnsData] = useState([]);

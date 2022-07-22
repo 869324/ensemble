@@ -1,39 +1,69 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { BASE_API_PATH } from "../../Config/config";
 import axios from "axios";
+import { success, fail } from "../../Utils/actions";
 
-const initialState = {
+const universalState = {
   tried: false,
   loading: false,
   status: false,
-  teams: [],
   error: null,
-  currentTeam: null,
 };
 
+const initialState = {
+  getTeams: { ...universalState, teams: [] },
+  getMembers: { ...universalState, members: [] },
+  createTeam: { ...universalState },
+  updateTeam: { ...universalState },
+  deleteTeam: { ...universalState },
+  currentTeam: {},
+};
 const teamsSlice = createSlice({
   name: "teams",
   initialState,
   reducers: {
     getTeams(state, action) {
-      return { ...state, ...action.payload };
-    },
-
-    create(state, action) {
-      return { ...state, ...action.payload };
-    },
-
-    selectTeam(state, action) {
-      return { ...state, currentTeam: action.payload };
-    },
-
-    resetTeams(state, action) {
       return {
         ...state,
-        loading: false,
-        tried: false,
-        status: false,
-        error: null,
+        getTeams: { ...state.getTeams, ...action.payload },
+      };
+    },
+
+    createTeam(state, action) {
+      return {
+        ...state,
+        createTeam: { ...state.createTeam, ...action.payload },
+      };
+    },
+
+    getMembers(state, action) {
+      return {
+        ...state,
+        getMembers: { ...state.getMembers, ...action.payload },
+      };
+    },
+
+    selectTask(state, action) {
+      return {
+        ...state,
+        currentTeam: {
+          ...state.currentTeam,
+          ...action.payload,
+        },
+      };
+    },
+
+    universalReset(state, action) {
+      const target = action.payload.state;
+      return {
+        ...state,
+        [target]: {
+          ...state[target],
+          tried: false,
+          loading: false,
+          status: false,
+          error: null,
+        },
       };
     },
   },
@@ -50,47 +80,50 @@ export const getTeams = (teamsData, type) => async (dispatch) => {
       dispatch(
         teamsSlice.actions.getTeams({
           teams: response.data,
-          loading: false,
-          status: true,
-          error: null,
         })
       );
+      success(dispatch, teamsSlice.actions.getTeams);
     })
     .catch((error) => {
-      dispatch(
-        teamsSlice.actions.getTeams({
-          loading: false,
-          status: false,
-        })
-      );
+      fail(dispatch, teamsSlice.actions.getTeams, error);
     });
 };
 
-export const create = (team) => async (dispatch) => {
+export const createTeam = (team) => async (dispatch) => {
   dispatch(teamsSlice.actions.create({ loading: true, tried: true }));
 
   axios
     .post(`${BASE_API_PATH}/teams/create`, team)
     .then((response) => {
-      dispatch(
-        teamsSlice.actions.create({
-          loading: false,
-          status: true,
-          error: "",
-        })
-      );
+      success(dispatch, teamsSlice.actions.createTeam);
     })
     .catch((error) => {
-      dispatch(
-        teamsSlice.actions.create({
-          loading: false,
-          status: false,
-          error: error.response.data.error,
-        })
-      );
+      fail(dispatch, teamsSlice.actions.createTeam, error);
     });
 };
 
-export const { resetTeams, selectTeam } = teamsSlice.actions;
+export const getMembers = (teamId) => async (dispatch) => {
+  dispatch(teamsSlice.actions.getMembers({ loading: true, tried: true }));
+
+  axios
+    .get(`${BASE_API_PATH}/teams/getTeamMembers/${teamId}`)
+    .then((response) => {
+      dispatch(
+        teamsSlice.actions.getMembers({
+          members: response.data,
+        })
+      );
+      success(dispatch, teamsSlice.actions.getMembers);
+    })
+    .catch((error) => {
+      fail(dispatch, teamsSlice.actions.getMembers, error);
+    });
+};
+
+export const teamReset = (state) => async (dispatch) => {
+  dispatch(teamsSlice.actions.universalReset({ state: state }));
+};
+
+export const { selectTeam } = teamsSlice.actions;
 
 export default teamsSlice.reducer;

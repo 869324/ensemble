@@ -8,7 +8,7 @@ import Sort from "../../Components/Sort/sort";
 import { debounce } from "lodash";
 import {
   getTeams,
-  resetTeams,
+  teamReset,
 } from "../../StateManagement/Reducers/teamsReducer";
 
 function TeamChooser(props) {
@@ -37,7 +37,7 @@ function TeamChooser(props) {
 
   useEffect(() => {
     return () => {
-      dispatch(resetTeams());
+      dispatch(teamReset("getTeams"));
     };
   }, []);
 

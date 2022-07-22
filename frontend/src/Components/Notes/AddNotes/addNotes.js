@@ -22,7 +22,7 @@ function AddNotes(props) {
 
   const [noteData, setNoteData] = useState({
     ...props.note,
-    project: props.project,
+    project: props.project.projectId,
   });
 
   useEffect(() => {
@@ -135,7 +135,7 @@ function AddNotes(props) {
               className={styles.input}
               name="text"
               placeholder="Type here ..."
-              value={noteData.tetxt}
+              value={noteData.text}
               onChange={handleNoteChange}
             />
           </div>

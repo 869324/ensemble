@@ -26,7 +26,7 @@ function Tables() {
   const { currentTable } = useSelector((state) => state.tables);
 
   const [tablesData, setTablesData] = useState({
-    project: currentProject,
+    project: currentProject.projectId,
     name: null,
     tableId: null,
     page: 1,

@@ -33,7 +33,7 @@ function Endpoints() {
   const [currentEndpoint, setCurrentEndpoint] = useState({});
 
   const [endpointData, setEndpointData] = useState({
-    project: currentProject,
+    project: currentProject.projectId,
     name: null,
     endpointId: null,
     page: 1,
