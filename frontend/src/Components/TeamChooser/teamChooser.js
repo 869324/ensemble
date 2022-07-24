@@ -15,7 +15,7 @@ function TeamChooser(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getTeamsState = useSelector((state) => state.teams);
+  const getTeamsState = useSelector((state) => state.teams.getTeams);
   const { user } = useSelector((state) => state.user);
   const [showModal, setShowModal] = useState(false);
 
@@ -30,10 +30,6 @@ function TeamChooser(props) {
   useEffect(() => {
     dispatch(getTeams(teamsData, "user"));
   }, [teamsData]);
-
-  useEffect(() => {
-    console.log(getTeamsState);
-  }, [getTeamsState]);
 
   useEffect(() => {
     return () => {

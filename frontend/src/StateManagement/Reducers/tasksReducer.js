@@ -19,7 +19,8 @@ const initialState = {
   getExtensions: { ...universalState, extensions: [] },
   approveExtension: { ...universalState },
   denyExtension: { ...universalState },
-  currentTask: {},
+  deleteExtension: { ...universalState },
+  currentTask: { extensions: [] },
 };
 
 const taskSlice = createSlice({
@@ -95,6 +96,16 @@ const taskSlice = createSlice({
         ...state,
         denyExtension: {
           ...state.denyExtension,
+          ...action.payload,
+        },
+      };
+    },
+
+    deleteExtension(state, action) {
+      return {
+        ...state,
+        deleteExtension: {
+          ...state.deleteExtension,
           ...action.payload,
         },
       };
@@ -189,11 +200,11 @@ export const deleteTask = (taskId) => async (dispatch) => {
     });
 };
 
-export const getExtensions = (extData) => async (dispatch) => {
+export const getExtensions = (taskId) => async (dispatch) => {
   dispatch(taskSlice.actions.getExtensions({ loading: true, tried: true }));
 
   axios
-    .post(`${BASE_API_PATH}/tasks/getExtensions`, extData)
+    .get(`${BASE_API_PATH}/tasks/getExtensions/${taskId}`)
     .then((response) => {
       if (response.status == 200) {
         dispatch(
@@ -258,7 +269,7 @@ export const deleteExtension = (extId) => async (dispatch) => {
   dispatch(taskSlice.actions.deleteExtension({ loading: true, tried: true }));
 
   axios
-    .put(`${BASE_API_PATH}/tasks/deleteExtension/${extId}`)
+    .delete(`${BASE_API_PATH}/tasks/deleteExtension/${extId}`)
     .then((response) => {
       if (response.status == 200) {
         success(dispatch, taskSlice.actions.deleteExtension);

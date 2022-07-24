@@ -202,6 +202,26 @@ CREATE TABLE ensemble.dbo.tableRelationships (
 );
 
 
+-- ensemble.dbo.tasks definition
+
+-- Drop table
+
+-- DROP TABLE ensemble.dbo.tasks;
+
+CREATE TABLE ensemble.dbo.tasks (
+	taskId varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	name varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	description varchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	project varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	asignee varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	deadline datetime2 NULL,
+	done int DEFAULT 0 NULL,
+	CONSTRAINT PK__tasks__DD5D5A427B3B154D PRIMARY KEY (taskId),
+	CONSTRAINT FK_TASK_ASIGNEE FOREIGN KEY (asignee) REFERENCES ensemble.dbo.users(userId) ON DELETE SET NULL,
+	CONSTRAINT FK_TASK_PROJECT FOREIGN KEY (project) REFERENCES ensemble.dbo.projects(projectId) ON DELETE CASCADE
+);
+
+
 -- ensemble.dbo.teamMembers definition
 
 -- Drop table
@@ -231,4 +251,20 @@ CREATE TABLE ensemble.dbo.[attributes] (
 	owner varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	CONSTRAINT PK__attribut__03B803F0B77A03AD PRIMARY KEY (attributeId),
 	CONSTRAINT FK_ATTRIBUTE_OWNER FOREIGN KEY (owner) REFERENCES ensemble.dbo.classes(classId) ON DELETE CASCADE
+);
+
+
+-- ensemble.dbo.deadlineExtensions definition
+
+-- Drop table
+
+-- DROP TABLE ensemble.dbo.deadlineExtensions;
+
+CREATE TABLE ensemble.dbo.deadlineExtensions (
+	extensionId int IDENTITY(1,1) NOT NULL,
+	task varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[time] datetime2 NOT NULL,
+	status int NULL,
+	CONSTRAINT PK__deadline__49ED0CF726216A6B PRIMARY KEY (extensionId),
+	CONSTRAINT FK_EXTENSION_TASK FOREIGN KEY (task) REFERENCES ensemble.dbo.tasks(taskId) ON DELETE CASCADE
 );
