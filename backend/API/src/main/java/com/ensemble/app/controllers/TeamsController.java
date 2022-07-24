@@ -1,5 +1,6 @@
 package com.ensemble.app.controllers;
 
+import com.ensemble.app.classes.User;
 import com.ensemble.app.utils.StoredProcedureCaller;
 import com.ensemble.app.classes.Team;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,26 +62,15 @@ public class TeamsController {
 
 
 
-    @DeleteMapping(value = "delete")
-    public Map<String, Object> deleteTeam(@RequestParam String teamId, HttpServletResponse response) {
-        List<Map<String, Object>> existingProjects = jdbcTemplate.queryForList("select * from projects where team = ?",teamId);
-        if (existingProjects.size() > 0) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return Map.of("Error", "This team has active projects!");
+    @DeleteMapping(value = "delete/{teamId}")
+    public Map<String, Object> deleteTeam(@PathVariable(value = "teamId") String teamId, HttpServletResponse response) {
+        int result = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
+
+        if (result == 0) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        else {
-            int result = jdbcTemplate.update("delete from teams where teamId = ?", teamId);
 
-            if (result > 0) {
-                response.setStatus(HttpStatus.OK.value());
-            } else {
-                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            }
-
-
-        }
         return null;
-
     }
 
 
@@ -150,6 +140,14 @@ public class TeamsController {
 
 
     return null;
+    }
+
+    @GetMapping(value = "getTeamMembers/{teamId}")
+    public Object getTeamMembers(@PathVariable(value = "teamId") String teamId, HttpServletResponse response) {
+        String query = "select u.* from users u inner join teamMembers t on u.userId = t.member where t.team = ? order by firstname ASC";
+        List<Map<String, Object>> users = jdbcTemplate.queryForList(query, teamId);
+
+        return users;
     }
 
 }

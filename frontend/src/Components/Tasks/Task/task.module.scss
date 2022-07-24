@@ -81,3 +81,25 @@
     background-color: rgba(250, 250, 250, 0.1);
   }
 }
+
+.extension {
+  color: whitesmoke;
+  @include centerContainerH;
+}
+
+.deleteIcon {
+  color: orangered;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.deleteIcon:hover,
+.approveIcon:hover {
+  background-color: rgba(250, 250, 250, 0.1);
+}
+
+.approveIcon {
+  color: green;
+  padding: 5px;
+  border-radius: 5px;
+}

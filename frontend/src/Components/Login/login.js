@@ -25,11 +25,7 @@ function Login() {
         user.configuredPassword == 1
           ? navigate("/user")
           : navigate("/configurePassword");
-      } else if (loading) {
-        swal({
-          text: "Loading ...",
-        });
-      } else if (error !== "") {
+      } else if (!loading && error !== "") {
         swal({
           title: "Login failed",
           icon: "error",
@@ -90,7 +86,6 @@ function Login() {
           </form>
 
           <button id={styles.forgotPassword}>Forgot your password?</button>
-          <Link to="/signup">Create Account</Link>
         </div>
       </div>
     </main>
